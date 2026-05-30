@@ -1,5 +1,5 @@
 {
-  "name": "@yangfree/vue-cmdk",
+  "name": "vue-command-kit",
   "version": "0.1.0",
   "description": "⌘K — Fast, composable, unstyled command menu for Vue 3",
   "type": "module",
