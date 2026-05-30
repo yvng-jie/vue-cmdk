@@ -29,11 +29,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm run build --config vite.demo.config.ts
-
-      - uses: actions/configure-pages@v5
-        with:
-          static_site_generator: vite
+      - run: pnpm run build:demo
 
       - uses: actions/upload-pages-artifact@v3
         with:
