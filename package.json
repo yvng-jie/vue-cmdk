@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "⌘K — Fast, composable, unstyled command menu for Vue 3",
   "type": "module",
+  "packageManager": "pnpm@11.1.2",
   "main": "./dist/vue-cmdk.umd.cjs",
   "module": "./dist/vue-cmdk.js",
   "exports": {
