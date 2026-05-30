@@ -1,5 +1,5 @@
 {
-  "name": "@yvng-jie/vue-cmdk",
+  "name": "@yangfree/vue-cmdk",
   "version": "0.1.0",
   "description": "⌘K — Fast, composable, unstyled command menu for Vue 3",
   "type": "module",

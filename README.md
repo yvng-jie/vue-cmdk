@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/npm/v/@yvng-jie/vue-cmdk?color=blue&label=version" alt="npm">
+  <img src="https://img.shields.io/npm/v/@yangfree/vue-cmdk?color=blue&label=version" alt="npm">
   <img src="https://img.shields.io/badge/vue-3.4%2B-brightgreen" alt="vue">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="license">
   <img src="https://img.shields.io/badge/bundle-3.4kB_gzip-green" alt="size">
@@ -97,7 +97,7 @@ However, the project has been **inactive since September 2023** — 9 issues rem
 ## 🚀 Install
 
 ```bash
-npm install @yvng-jie/vue-cmdk
+npm install @yangfree/vue-cmdk
 ```
 
 ## Quick Start
@@ -107,8 +107,8 @@ npm install @yvng-jie/vue-cmdk
 ```vue
 <script setup lang="ts">
   import { ref } from 'vue'
-  import { Command } from '@yvng-jie/vue-cmdk'
-  import type { CommandItemData } from '@yvng-jie/vue-cmdk'
+  import { Command } from '@yangfree/vue-cmdk'
+  import type { CommandItemData } from '@yangfree/vue-cmdk'
 
   const visible = ref(false)
 
@@ -155,7 +155,7 @@ npm install @yvng-jie/vue-cmdk
 
 ```vue
 <script setup lang="ts">
-  import { Command } from '@yvng-jie/vue-cmdk'
+  import { Command } from '@yangfree/vue-cmdk'
 
   function myFilter(items: CommandItemData[], query: string) {
     // Return filtered items, or null to use default filter
@@ -224,8 +224,8 @@ interface CommandItemData {
 ### `useCommandMenu()` Composable
 
 ```ts
-import { useCommandMenu } from '@yvng-jie/vue-cmdk'
-import type { UseCommandMenuReturn, FilterFn } from '@yvng-jie/vue-cmdk'
+import { useCommandMenu } from '@yangfree/vue-cmdk'
+import type { UseCommandMenuReturn, FilterFn } from '@yangfree/vue-cmdk'
 
 const menu: UseCommandMenuReturn = useCommandMenu(customFilter?)
 menu.items.value = [...]
