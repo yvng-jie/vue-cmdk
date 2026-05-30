@@ -1,0 +1,71 @@
+{
+  "name": "vue-cmdk",
+  "version": "0.1.0",
+  "description": "⌘K — Fast, composable, unstyled command menu for Vue 3",
+  "type": "module",
+  "main": "./dist/vue-cmdk.umd.cjs",
+  "module": "./dist/vue-cmdk.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/vue-cmdk.js",
+      "require": "./dist/vue-cmdk.umd.cjs"
+    }
+  },
+  "files": [
+    "dist/vue-cmdk.js",
+    "dist/vue-cmdk.umd.cjs",
+    "dist/*.d.ts"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/postbuild.mjs",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit",
+    "prepublishOnly": "pnpm run build"
+  },
+  "keywords": [
+    "vue",
+    "command",
+    "palette",
+    "command-palette",
+    "cmdk",
+    "cmd-k",
+    "vue3",
+    "keyboard",
+    "menu"
+  ],
+  "license": "MIT",
+  "author": "yvng-jie (https://github.com/yvng-jie)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yvng-jie/vue-cmdk"
+  },
+  "homepage": "https://github.com/yvng-jie/vue-cmdk#readme",
+  "bugs": {
+    "url": "https://github.com/yvng-jie/vue-cmdk/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "peerDependencies": {
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "@microsoft/api-extractor": "^7.58.7",
+    "@types/node": "^25.9.1",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "@vue/shared": "^3.5.35",
+    "highlight.js": "^11.11.1",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0",
+    "vite-plugin-dts": "^4.0.0",
+    "vue": "^3.5.0",
+    "vue-tsc": "^2.0.0"
+  }
+}
