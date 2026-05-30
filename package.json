@@ -49,7 +49,7 @@
     "url": "https://github.com/yvng-jie/vue-cmdk/issues"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22.13"
   },
   "publishConfig": {
     "access": "public",
