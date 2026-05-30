@@ -22,6 +22,7 @@
     "dev": "vite",
     "build": "vite build && node scripts/postbuild.mjs",
     "preview": "vite preview",
+    "build:demo": "vite build --config vite.demo.config.ts",
     "typecheck": "vue-tsc --noEmit",
     "prepublishOnly": "pnpm run build"
   },
