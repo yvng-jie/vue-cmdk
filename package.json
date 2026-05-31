@@ -1,6 +1,6 @@
 {
   "name": "vue-command-kit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "⌘K — Fast, composable, unstyled command menu for Vue 3",
   "type": "module",
   "packageManager": "pnpm@11.1.2",
@@ -11,12 +11,20 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/vue-cmdk.js",
       "require": "./dist/vue-cmdk.umd.cjs"
+    },
+    "./composables": {
+      "types": "./dist/useCommandMenu.d.ts",
+      "import": "./dist/vue-cmdk.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/vue-cmdk.js"
     }
   },
   "files": [
     "dist/vue-cmdk.js",
     "dist/vue-cmdk.umd.cjs",
-    "dist/*.d.ts"
+    "dist/**/*.d.ts"
   ],
   "sideEffects": false,
   "scripts": {

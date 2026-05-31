@@ -1,44 +1,35 @@
 <script setup lang="ts">
-  import { watch, provide, nextTick } from 'vue'
-  import type { CommandItemData } from './types'
-  import type { FilterFn } from './useCommandMenu'
-  import { useCommandMenu } from './useCommandMenu'
-  import { CMDK_STATE, CMDK_LOADING, CMDK_CLOSE_ON_SELECT, CMDK_SELECT_HANDLER } from './injectionKeys'
+  import { ref, watch, nextTick } from 'vue'
+  import type { CommandItemData, CommandDialogProps } from './types'
+  import { useCommandRoot } from './useCommandRoot'
   import CommandInput from './CommandInput.vue'
   import CommandList from './CommandList.vue'
 
-  const props = withDefaults(
-    defineProps<{
-      visible?: boolean
-      placeholder?: string
-      autoFocus?: boolean
-      closeOnSelect?: boolean
-      /** Command items to display */
-      items?: CommandItemData[]
-      /** Custom filter function. Return items to display, or null to use the default filter. */
-      filter?: FilterFn
-      /** Show loading state */
-      loading?: boolean
-    }>(),
-    {
-      visible: false,
-      placeholder: 'Type a command or search...',
-      autoFocus: true,
-      closeOnSelect: true,
-      items: () => [],
-      loading: false,
-    },
-  )
+  const props = withDefaults(defineProps<CommandDialogProps>(), {
+    visible: false,
+    placeholder: 'Type a command or search...',
+    autoFocus: true,
+    closeOnSelect: true,
+    items: () => [],
+    loading: false,
+  })
 
   const emit = defineEmits<{
     (e: 'update:visible', value: boolean): void
+    (e: 'update:searchQuery', value: string): void
     (e: 'select', item: CommandItemData): void
   }>()
 
-  const state = useCommandMenu(props.filter, handleItemSelect)
-  provide(CMDK_STATE, state)
-  provide(CMDK_LOADING, () => props.loading)
-  provide(CMDK_CLOSE_ON_SELECT, () => props.closeOnSelect)
+  const { state } = useCommandRoot(
+    {
+      filter: props.filter,
+      loading: props.loading,
+      closeOnSelect: props.closeOnSelect,
+    },
+    emit,
+  )
+
+  const commandInputRef = ref<InstanceType<typeof CommandInput> | null>(null)
 
   // Sync items prop with internal state
   watch(
@@ -58,23 +49,22 @@
     { immediate: true },
   )
 
+  // Also sync searchQuery prop with internal state (for v-model:searchQuery)
+  watch(
+    () => props.searchQuery,
+    (v) => {
+      if (v !== undefined) state.searchQuery.value = v
+    },
+  )
+  watch(state.searchQuery, (v) => emit('update:searchQuery', v))
+
   watch(state.visible, async (v) => {
     emit('update:visible', v)
     if (v) {
       await nextTick()
-      const input = document.querySelector<HTMLInputElement>('[data-cmdk-input]')
-      input?.focus()
+      commandInputRef.value?.inputRef?.focus()
     }
   })
-
-  /** Called by CommandItem when an item is selected */
-  function handleItemSelect(item: CommandItemData) {
-    emit('select', item)
-    if (props.closeOnSelect) {
-      state.close()
-    }
-  }
-  provide(CMDK_SELECT_HANDLER, handleItemSelect)
 
   function closeOnMask(e: MouseEvent) {
     if (e.target === e.currentTarget) {
@@ -127,6 +117,7 @@
           <div data-cmdk-dialog-header="">
             <slot name="header">
               <CommandInput
+                ref="commandInputRef"
                 :placeholder="placeholder"
                 :auto-focus="autoFocus"
               />

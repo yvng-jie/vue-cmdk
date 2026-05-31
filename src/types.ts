@@ -45,6 +45,12 @@ export interface CommandRootEmits {
   (e: 'select', item: CommandItemData): void
 }
 
+/** Props for CommandDialog — extends shared root props with items array */
+export interface CommandDialogProps extends CommandRootProps {
+  /** Command items to display */
+  items?: CommandItemData[]
+}
+
 /** Group definition */
 export interface CommandGroupData {
   heading: string

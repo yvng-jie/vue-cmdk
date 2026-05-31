@@ -11,7 +11,9 @@
   Press <kbd>⌘K</kbd> and take control.
 </p>
 
----
+<p align="center">
+  <img src="./demo.gif" alt="vue-cmdk demo" width="720">
+</p>
 
 ## 🧠 Inspiration
 
@@ -171,26 +173,92 @@ npm install vue-command-kit
 </template>
 ```
 
+### With v-model:searchQuery
+
+```vue
+<script setup lang="ts">
+  import { ref } from 'vue'
+  import { Command } from 'vue-command-kit'
+  import type { CommandItemData } from 'vue-command-kit'
+
+  const visible = ref(false)
+  const query = ref('')
+
+  const items: CommandItemData[] = [
+    { value: 'home', label: 'Home', keywords: ['dashboard'] },
+    { value: 'settings', label: 'Settings' },
+  ]
+</script>
+
+<template>
+  <Command.Dialog
+    :visible="visible"
+    :items="items"
+    v-model:searchQuery="query"
+    @update:visible="visible = $event"
+  />
+</template>
+```
+
+### Async data + loading
+
+```vue
+<script setup lang="ts">
+  import { ref, watch } from 'vue'
+  import { Command } from 'vue-command-kit'
+  import type { CommandItemData } from 'vue-command-kit'
+
+  const visible = ref(false)
+  const loading = ref(false)
+  const items = ref<CommandItemData[]>([])
+
+  watch(visible, async (v) => {
+    if (v) {
+      loading.value = true
+      const data = await fetch('/api/commands').then((r) => r.json())
+      items.value = data.map((d: any) => ({
+        value: d.id,
+        label: d.name,
+        group: d.category,
+      }))
+      loading.value = false
+    }
+  })
+</script>
+
+<template>
+  <Command.Dialog
+    :visible="visible"
+    :items="items"
+    :loading="loading"
+    @update:visible="visible = $event"
+    @select="console.log('selected', $event)"
+  />
+</template>
+```
+
 ## 📖 API
 
 ### `<Command.Dialog>` Props
 
-| Prop            | Type                | Default               | Description                  |
-| --------------- | ------------------- | --------------------- | ---------------------------- |
-| `visible`       | `boolean`           | `false`               | Controlled open state        |
-| `items`         | `CommandItemData[]` | `[]`                  | Items to display             |
-| `placeholder`   | `string`            | `'Type a command...'` | Input placeholder            |
-| `filter`        | `FilterFn`          | —                     | Custom filter function       |
-| `loading`       | `boolean`           | `false`               | Show loading state           |
-| `autoFocus`     | `boolean`           | `true`                | Auto-focus input on open     |
-| `closeOnSelect` | `boolean`           | `true`                | Close dialog after selection |
+| Prop            | Type                | Default               | Description                          |
+| --------------- | ------------------- | --------------------- | ------------------------------------ |
+| `visible`       | `boolean`           | `false`               | Controlled open state                |
+| `items`         | `CommandItemData[]` | `[]`                  | Items to display                     |
+| `searchQuery`   | `string`            | `''`                  | Search query (`v-model:searchQuery`) |
+| `placeholder`   | `string`            | `'Type a command...'` | Input placeholder                    |
+| `filter`        | `FilterFn`          | —                     | Custom filter function               |
+| `loading`       | `boolean`           | `false`               | Show loading state                   |
+| `autoFocus`     | `boolean`           | `true`                | Auto-focus input on open             |
+| `closeOnSelect` | `boolean`           | `true`                | Close dialog after selection         |
 
 ### `<Command.Dialog>` Events
 
-| Event            | Payload           | Description                      |
-| ---------------- | ----------------- | -------------------------------- |
-| `update:visible` | `boolean`         | Emitted when visibility changes  |
-| `select`         | `CommandItemData` | Emitted when an item is selected |
+| Event                | Payload           | Description                       |
+| -------------------- | ----------------- | --------------------------------- |
+| `update:visible`     | `boolean`         | Emitted when visibility changes   |
+| `update:searchQuery` | `string`          | Emitted when search query changes |
+| `select`             | `CommandItemData` | Emitted when an item is selected  |
 
 ### Components
 
@@ -245,16 +313,69 @@ menu.toggle()
 
 ## 🤝 Contributing
 
+### Prerequisites
+
+- **Node.js** >= 22.13
+- **pnpm** >= 11.x
+
+### Setup
+
 ```bash
-# dev
+# Clone the repo
+git clone https://github.com/yvng-jie/vue-cmdk.git
+cd vue-cmdk
+
+# Install dependencies
+pnpm install
+
+# Start demo dev server
 pnpm dev
-
-# type check
-pnpm typecheck
-
-# build
-pnpm build
 ```
+
+### Scripts
+
+| Command           | Description                               |
+| ----------------- | ----------------------------------------- |
+| `pnpm dev`        | Start demo dev server at `localhost:5173` |
+| `pnpm build`      | Build the library + type declarations     |
+| `pnpm typecheck`  | Run TypeScript type checking              |
+| `pnpm preview`    | Preview production build                  |
+| `pnpm build:demo` | Build demo site to `dist-demo/`           |
+
+### Project Structure
+
+```
+src/
+├── useCommandMenu.ts     # core composable (state, filter, shortcuts)
+├── useCommandRoot.ts     # shared composable (provide/inject wiring)
+├── types.ts              # TypeScript type definitions
+├── injectionKeys.ts      # provide/inject keys
+├── utils/
+│   └── injectStrict.ts   # type-safe inject helper
+├── CommandMenu.vue       # inline command menu
+├── CommandDialog.vue     # modal dialog command palette
+├── CommandInput.vue      # search input
+├── CommandList.vue       # scrollable filtered list
+├── CommandGroup.vue      # group with heading
+├── CommandItem.vue       # single selectable item
+├── CommandEmpty.vue      # empty state
+├── CommandSeparator.vue  # visual separator
+├── CommandLoading.vue    # loading indicator
+├── index.ts              # barrel exports
+└── env.d.ts              # type shims
+demo/
+├── App.vue               # demo application
+├── main.ts               # demo entry
+└── style.css             # demo styles
+```
+
+### Pull Request Process
+
+1. Fork the repo and create a feature branch from `main`
+2. Make your changes and run `pnpm typecheck && pnpm build`
+3. Test your changes with `pnpm dev` (demo app)
+4. Update `CHANGELOG.md` with a description of your changes
+5. Submit a PR with a clear description of what and why
 
 PRs and issues are welcome!
 

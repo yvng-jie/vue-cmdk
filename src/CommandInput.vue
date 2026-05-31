@@ -1,7 +1,8 @@
 <script setup lang="ts">
-  import { inject } from 'vue'
+  import { inject, ref } from 'vue'
   import type { CommandItemData } from './types'
   import { CMDK_STATE, CMDK_SELECT_HANDLER } from './injectionKeys'
+  import { injectStrict } from './utils/injectStrict'
 
   const props = withDefaults(
     defineProps<{
@@ -14,8 +15,11 @@
     },
   )
 
-  const state = inject(CMDK_STATE)!
+  const state = injectStrict(CMDK_STATE, 'CommandInput')
   const onItemSelect = inject(CMDK_SELECT_HANDLER, () => {})
+
+  const inputRef = ref<HTMLInputElement | null>(null)
+  defineExpose({ inputRef })
 
   function onInput(e: Event) {
     state.searchQuery.value = (e.target as HTMLInputElement).value
@@ -42,6 +46,7 @@
 
 <template>
   <input
+    ref="inputRef"
     data-cmdk-input=""
     :value="state.searchQuery.value"
     :placeholder="placeholder"

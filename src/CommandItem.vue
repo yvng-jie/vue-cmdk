@@ -1,7 +1,8 @@
 <script setup lang="ts">
   import { inject, computed, type Component, type VNode } from 'vue'
   import type { CommandItemData } from './types'
-  import { CMDK_STATE, CMDK_CLOSE_ON_SELECT, CMDK_SELECT_HANDLER } from './injectionKeys'
+  import { CMDK_STATE, CMDK_CLOSE_ON_SELECT, CMDK_SELECT_HANDLER, CMDK_ITEM_INDEX_MAP } from './injectionKeys'
+  import { injectStrict } from './utils/injectStrict'
 
   const props = withDefaults(
     defineProps<{
@@ -18,7 +19,8 @@
     },
   )
 
-  const state = inject(CMDK_STATE)!
+  const state = injectStrict(CMDK_STATE, 'CommandItem')
+  const getIndexMap = inject(CMDK_ITEM_INDEX_MAP, () => new Map())
 
   const itemData = computed<CommandItemData>(() => ({
     value: props.value,
@@ -57,8 +59,8 @@
     @click="handleClick"
     @pointerenter="
       () => {
-        const idx = state.filteredItems.value.findIndex((i: CommandItemData) => i.value === value)
-        if (idx >= 0) state.activeIndex.value = idx
+        const idx = getIndexMap().get(value)
+        if (idx !== undefined) state.activeIndex.value = idx
       }
     "
   >

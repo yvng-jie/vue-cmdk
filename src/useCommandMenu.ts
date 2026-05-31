@@ -28,6 +28,9 @@ const MODIFIER_MAP: Record<string, 'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey'
   '⇧': 'shiftKey',
 }
 
+/** Regex to match leading modifier symbols followed by a key character */
+const MODIFIER_PATTERN = /^([⌘⌃⌥⇧]+)(.+)$/
+
 /** Parse a shortcut string like "⌘S" or "⌘⇧F" into a key+modifiers descriptor */
 function parseShortcut(shortcut: string): {
   key: string
@@ -36,22 +39,17 @@ function parseShortcut(shortcut: string): {
   altKey?: boolean
   shiftKey?: boolean
 } | null {
-  let remaining = shortcut
+  if (!shortcut) return null
+  const match = MODIFIER_PATTERN.exec(shortcut)
+  if (!match) return { key: shortcut.toLowerCase() }
+
+  const [, modSymbols, key] = match
   const mods: Partial<Record<'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey', boolean>> = {}
-  let changed = true
-  while (changed && remaining.length > 0) {
-    changed = false
-    for (const [symbol, prop] of Object.entries(MODIFIER_MAP)) {
-      if (remaining.startsWith(symbol)) {
-        mods[prop] = true
-        remaining = remaining.slice(symbol.length)
-        changed = true
-        break
-      }
-    }
+  for (const ch of modSymbols) {
+    const prop = MODIFIER_MAP[ch]
+    if (prop) mods[prop] = true
   }
-  if (!remaining) return null
-  return { ...mods, key: remaining.toLowerCase() }
+  return { ...mods, key: key.toLowerCase() }
 }
 
 /** Check if a KeyboardEvent matches a parsed shortcut descriptor */
@@ -181,7 +179,7 @@ export function useCommandMenu(
         cleanupShortcuts = () => window.removeEventListener('keydown', onShortcutKeydown)
       }
     },
-    { immediate: true, flush: 'sync' },
+    { immediate: true, flush: 'post' },
   )
 
   onUnmounted(() => {

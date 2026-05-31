@@ -2,13 +2,14 @@
   import { inject, computed } from 'vue'
   import type { CommandGroupData } from './types'
   import { CMDK_STATE, CMDK_LOADING } from './injectionKeys'
+  import { injectStrict } from './utils/injectStrict'
   import CommandEmpty from './CommandEmpty.vue'
   import CommandLoading from './CommandLoading.vue'
   import CommandGroup from './CommandGroup.vue'
   import CommandItem from './CommandItem.vue'
   import CommandSeparator from './CommandSeparator.vue'
 
-  const state = inject(CMDK_STATE)!
+  const state = injectStrict(CMDK_STATE, 'CommandList')
   const getLoading = inject(CMDK_LOADING, () => false)
 
   const grouped = computed(() => state.groupedItems.value as CommandGroupData[])

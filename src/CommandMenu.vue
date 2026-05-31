@@ -1,8 +1,7 @@
 <script setup lang="ts">
-  import { provide, watch, computed, type Ref } from 'vue'
-  import type { CommandItemData, CommandRootProps, CommandRootEmits } from './types'
-  import { useCommandMenu } from './useCommandMenu'
-  import { CMDK_STATE, CMDK_LOADING, CMDK_CLOSE_ON_SELECT, CMDK_SELECT_HANDLER } from './injectionKeys'
+  import { provide, watch } from 'vue'
+  import type { CommandRootProps, CommandRootEmits } from './types'
+  import { useCommandRoot } from './useCommandRoot'
 
   const props = withDefaults(defineProps<CommandRootProps>(), {
     placeholder: 'Type a command or search...',
@@ -12,24 +11,21 @@
 
   const emit = defineEmits<CommandRootEmits>()
 
-  const state = useCommandMenu(props.filter, (item: CommandItemData) => {
-    emit('select', item)
-    if (props.closeOnSelect) state.close()
-  })
+  const { state, handleSelect } = useCommandRoot(
+    {
+      filter: props.filter,
+      loading: props.loading,
+      closeOnSelect: props.closeOnSelect,
+    },
+    emit,
+  )
 
   // Sync visible prop with internal state
   state.visible.value = props.visible ?? true
   state.searchQuery.value = props.searchQuery ?? ''
 
-  // Provide state to child components
-  provide(CMDK_STATE, state)
   provide('cmdk-filter', props.filter)
-  provide(CMDK_LOADING, () => props.loading ?? false)
-  provide(CMDK_CLOSE_ON_SELECT, () => props.closeOnSelect)
-  provide(CMDK_SELECT_HANDLER, (item: CommandItemData) => {
-    emit('select', item)
-    if (props.closeOnSelect) state.close()
-  })
+
   watch(
     () => props.visible,
     (v) => {
@@ -45,11 +41,6 @@
     },
   )
   watch(state.searchQuery, (v) => emit('update:searchQuery', v))
-
-  function handleSelect(item: CommandItemData) {
-    emit('select', item)
-    if (props.closeOnSelect) state.close()
-  }
 
   // Expose public API
   defineExpose({

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-  import { inject } from 'vue'
   import { CMDK_STATE } from './injectionKeys'
+  import { injectStrict } from './utils/injectStrict'
 
-  const state = inject(CMDK_STATE)!
+  const state = injectStrict(CMDK_STATE, 'CommandEmpty')
 </script>
 
 <template>
