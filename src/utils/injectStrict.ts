@@ -8,8 +8,10 @@ import { inject, type InjectionKey } from 'vue'
  */
 export function injectStrict<T>(key: InjectionKey<T>, componentName: string): T {
   const value = inject(key)
-  if (!value) {
-    throw new Error(`[vue-cmdk] <${componentName}> must be used inside <CommandMenu> or <CommandDialog>.`)
+  if (value === undefined || value === null) {
+    throw new Error(
+      `[vue-cmdk] <${componentName}> must be used inside <CommandMenu> or <CommandDialog>.`,
+    )
   }
   return value
 }

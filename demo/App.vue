@@ -1,170 +1,161 @@
 <script setup lang="ts">
-  import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
-  import { Command } from '../src/index'
-  import type { CommandItemData } from '../src/types'
-  import hljs from 'highlight.js'
+import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { Command } from '../src/index'
+import type { CommandItemData } from '../src/types'
+import hljs from 'highlight.js'
 
-  /* ── Theme management (4 themes) ── */
-  const THEMES = [
-    { id: 'dark', label: 'Dark', icon: '🌙' },
-    { id: 'light', label: 'Light', icon: '☀️' },
-    { id: 'midnight', label: 'Midnight', icon: '🌃' },
-    { id: 'cyberpunk', label: 'Cyberpunk', icon: '🌐' },
-  ]
-  const currentTheme = ref('dark')
+/* ── Theme management (4 themes) ── */
+const THEMES = [
+  { id: 'dark', label: 'Dark', icon: '🌙' },
+  { id: 'light', label: 'Light', icon: '☀️' },
+  { id: 'midnight', label: 'Midnight', icon: '🌃' },
+  { id: 'cyberpunk', label: 'Cyberpunk', icon: '🌐' },
+]
+const currentTheme = ref('dark')
 
-  const mediaQuery = window.matchMedia('(prefers-color-scheme: light)')
-  if (mediaQuery.matches) currentTheme.value = 'light'
+const mediaQuery = window.matchMedia('(prefers-color-scheme: light)')
+if (mediaQuery.matches) currentTheme.value = 'light'
 
-  mediaQuery.addEventListener('change', (e) => {
-    if (!manualTheme.value) currentTheme.value = e.matches ? 'light' : 'dark'
-  })
-  const manualTheme = ref(false)
+mediaQuery.addEventListener('change', (e) => {
+  if (!manualTheme.value) currentTheme.value = e.matches ? 'light' : 'dark'
+})
+const manualTheme = ref(false)
 
-  watch(
-    currentTheme,
-    (v) => {
-      document.documentElement.dataset.theme = v
-      manualTheme.value = true
-      nextTick(() => hljs.highlightAll())
-    },
-    { immediate: true },
-  )
+watch(
+  currentTheme,
+  (v) => {
+    document.documentElement.dataset.theme = v
+    manualTheme.value = true
+    nextTick(() => hljs.highlightAll())
+  },
+  { immediate: true },
+)
 
-  function setTheme(id: string) {
-    currentTheme.value = id
+function setTheme(id: string) {
+  currentTheme.value = id
+}
+
+/* ── Command palette state ── */
+const visible = ref(false)
+
+const demoItems: CommandItemData[] = [
+  {
+    value: 'search',
+    label: 'Search files',
+    shortcut: '⌘S',
+    group: 'Navigation',
+    keywords: ['find', 'lookup'],
+  },
+  {
+    value: 'home',
+    label: 'Go to home',
+    shortcut: '⌘H',
+    group: 'Navigation',
+    keywords: ['dashboard'],
+  },
+  {
+    value: 'bookmarks',
+    label: 'Bookmarks',
+    shortcut: '⌘B',
+    group: 'Navigation',
+    keywords: ['favorites'],
+  },
+  { value: 'settings', label: 'Open settings', shortcut: '⌘,', group: 'Actions' },
+  {
+    value: 'theme',
+    label: 'Toggle theme',
+    shortcut: '⌘D',
+    group: 'Actions',
+    keywords: ['dark', 'light'],
+  },
+  { value: 'notifications', label: 'Notifications', group: 'System' },
+  { value: 'language', label: 'Change language', group: 'System' },
+  { value: 'keyboard', label: 'Keyboard shortcuts', group: 'System', keywords: ['hotkeys'] },
+  { value: 'logout', label: 'Sign out', group: 'Actions' },
+]
+
+function onSelect(item: CommandItemData) {
+  if (item.value === 'theme') {
+    const idx = THEMES.findIndex((t) => t.id === currentTheme.value)
+    setTheme(THEMES[(idx + 1) % THEMES.length].id)
   }
+  console.log('Selected:', item.value)
+}
 
-  /* ── Command palette state ── */
-  const visible = ref(false)
-
-  const demoItems: CommandItemData[] = [
-    { value: 'search', label: 'Search files', shortcut: '⌘S', group: 'Navigation', keywords: ['find', 'lookup'] },
-    { value: 'home', label: 'Go to home', shortcut: '⌘H', group: 'Navigation', keywords: ['dashboard'] },
-    { value: 'bookmarks', label: 'Bookmarks', shortcut: '⌘B', group: 'Navigation', keywords: ['favorites'] },
-    { value: 'settings', label: 'Open settings', shortcut: '⌘,', group: 'Actions' },
-    { value: 'theme', label: 'Toggle theme', shortcut: '⌘D', group: 'Actions', keywords: ['dark', 'light'] },
-    { value: 'notifications', label: 'Notifications', group: 'System' },
-    { value: 'language', label: 'Change language', group: 'System' },
-    { value: 'keyboard', label: 'Keyboard shortcuts', group: 'System', keywords: ['hotkeys'] },
-    { value: 'logout', label: 'Sign out', group: 'Actions' },
-  ]
-
-  function onSelect(item: CommandItemData) {
-    if (item.value === 'theme') {
-      const idx = THEMES.findIndex((t) => t.id === currentTheme.value)
-      setTheme(THEMES[(idx + 1) % THEMES.length].id)
-    }
-    console.log('Selected:', item.value)
+/* ── Global ⌘K shortcut ── */
+function onGlobalKeydown(e: KeyboardEvent) {
+  if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+    e.preventDefault()
+    visible.value = !visible.value
   }
+}
 
-  /* ── Global ⌘K shortcut ── */
-  function onGlobalKeydown(e: KeyboardEvent) {
-    if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
-      e.preventDefault()
-      visible.value = !visible.value
-    }
-  }
+onMounted(() => {
+  window.addEventListener('keydown', onGlobalKeydown)
+  hljs.highlightAll()
+})
+onUnmounted(() => window.removeEventListener('keydown', onGlobalKeydown))
 
-  onMounted(() => {
-    window.addEventListener('keydown', onGlobalKeydown)
-    hljs.highlightAll()
-  })
-  onUnmounted(() => window.removeEventListener('keydown', onGlobalKeydown))
+/* ── Smooth scroll for anchor links ── */
+function scrollTo(id: string) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+}
 
-  /* ── Smooth scroll for anchor links ── */
-  function scrollTo(id: string) {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-  }
+/* ── Feature flags for vs-cmdk table ── */
+const cmdkFeatures = [
+  { feat: 'Command root value / onValueChange', react: true, vue: false, status: 'planned' },
+  { feat: 'Command root shouldFilter', react: true, vue: false, status: 'planned' },
+  { feat: 'Command root loop', react: true, vue: false, status: 'planned' },
+  { feat: 'Command root label (aria-label)', react: true, vue: false, status: 'planned' },
+  { feat: 'Command.Dialog open / onOpenChange', react: true, vue: true, status: 'done' },
+  { feat: 'Command.Dialog container (portal)', react: true, vue: false, status: 'future' },
+  { feat: 'Command.Input value / onValueChange', react: true, vue: true, status: 'done' },
+  { feat: 'Command.Item forceMount', react: true, vue: false, status: 'planned' },
+  { feat: 'Command.Item keywords', react: true, vue: true, status: 'done' },
+  { feat: 'Command.Item onSelect', react: true, vue: true, status: 'done' },
+  { feat: 'Command.Item auto value from textContent', react: true, vue: false, status: 'planned' },
+  { feat: 'Command.Group forceMount', react: true, vue: false, status: 'planned' },
+  { feat: 'Command.Separator alwaysRender', react: true, vue: false, status: 'future' },
+  { feat: 'useCommandState() selector', react: true, vue: false, status: 'planned' },
+  { feat: 'Nested items / Pages', react: true, vue: false, status: 'planned' },
+  { feat: 'Built-in search / filtering', react: true, vue: true, status: 'done' },
+  { feat: 'Custom filter function', react: true, vue: true, status: 'done' },
+  { feat: 'Global shortcut listener', react: false, vue: true, status: 'bonus' },
+  { feat: 'Keyboard navigation', react: true, vue: true, status: 'done' },
+  { feat: 'Focus trap', react: true, vue: true, status: 'done' },
+  { feat: 'Zero dependencies', react: false, vue: true, status: 'bonus' },
+  { feat: 'TypeScript', react: true, vue: true, status: 'done' },
+]
 
-  /* ── Feature flags for vs-cmdk table ── */
-  const cmdkFeatures = [
-    { feat: 'Command root value / onValueChange', react: true, vue: false, status: 'planned' },
-    { feat: 'Command root shouldFilter', react: true, vue: false, status: 'planned' },
-    { feat: 'Command root loop', react: true, vue: false, status: 'planned' },
-    { feat: 'Command root label (aria-label)', react: true, vue: false, status: 'planned' },
-    { feat: 'Command.Dialog open / onOpenChange', react: true, vue: true, status: 'done' },
-    { feat: 'Command.Dialog container (portal)', react: true, vue: false, status: 'future' },
-    { feat: 'Command.Input value / onValueChange', react: true, vue: true, status: 'done' },
-    { feat: 'Command.Item forceMount', react: true, vue: false, status: 'planned' },
-    { feat: 'Command.Item keywords', react: true, vue: true, status: 'done' },
-    { feat: 'Command.Item onSelect', react: true, vue: true, status: 'done' },
-    { feat: 'Command.Item auto value from textContent', react: true, vue: false, status: 'planned' },
-    { feat: 'Command.Group forceMount', react: true, vue: false, status: 'planned' },
-    { feat: 'Command.Separator alwaysRender', react: true, vue: false, status: 'future' },
-    { feat: 'useCommandState() selector', react: true, vue: false, status: 'planned' },
-    { feat: 'Nested items / Pages', react: true, vue: false, status: 'planned' },
-    { feat: 'Built-in search / filtering', react: true, vue: true, status: 'done' },
-    { feat: 'Custom filter function', react: true, vue: true, status: 'done' },
-    { feat: 'Global shortcut listener', react: false, vue: true, status: 'bonus' },
-    { feat: 'Keyboard navigation', react: true, vue: true, status: 'done' },
-    { feat: 'Focus trap', react: true, vue: true, status: 'done' },
-    { feat: 'Zero dependencies', react: false, vue: true, status: 'bonus' },
-    { feat: 'TypeScript', react: true, vue: true, status: 'done' },
-  ]
-
-  const statusLabels: Record<string, string> = {
-    done: '✅',
-    planned: '📋',
-    future: '💡',
-    bonus: '⭐',
-  }
+const statusLabels: Record<string, string> = {
+  done: '✅',
+  planned: '📋',
+  future: '💡',
+  bonus: '⭐',
+}
 </script>
 
 <template>
   <div class="landing">
     <!-- ═══════════════ Navbar ═══════════════ -->
     <nav class="navbar">
-      <div
-        class="navbar-brand"
-        @click="scrollTo('hero')"
-      >
+      <div class="navbar-brand" @click="scrollTo('hero')">
         <span class="navbar-logo">⌘K</span>
         <span class="navbar-title">vue-cmdk</span>
       </div>
       <div class="navbar-links">
-        <a
-          href="#features"
-          @click.prevent="scrollTo('features')"
-        >
-          Features
-        </a>
-        <a
-          href="#demo"
-          @click.prevent="scrollTo('demo')"
-        >
-          Demo
-        </a>
-        <a
-          href="#quickstart"
-          @click.prevent="scrollTo('quickstart')"
-        >
-          Quick Start
-        </a>
-        <a
-          href="#comparison"
-          @click.prevent="scrollTo('comparison')"
-        >
-          vs cmdk
-        </a>
-        <a
-          href="#api"
-          @click.prevent="scrollTo('api')"
-        >
-          API
-        </a>
+        <a href="#features" @click.prevent="scrollTo('features')"> Features </a>
+        <a href="#demo" @click.prevent="scrollTo('demo')"> Demo </a>
+        <a href="#quickstart" @click.prevent="scrollTo('quickstart')"> Quick Start </a>
+        <a href="#comparison" @click.prevent="scrollTo('comparison')"> vs cmdk </a>
+        <a href="#api" @click.prevent="scrollTo('api')"> API </a>
         <a
           href="https://github.com/yvng-jie/vue-cmdk"
           target="_blank"
           class="nav-gh-link"
           title="GitHub"
         >
-          <svg
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            fill="currentColor"
-          >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
             <path
               d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
             />
@@ -174,10 +165,7 @@
     </nav>
 
     <!-- ═══════════════ Hero ═══════════════ -->
-    <section
-      id="hero"
-      class="hero"
-    >
+    <section id="hero" class="hero">
       <div class="hero-bg-gradient" />
       <div class="hero-orbs">
         <div class="hero-orb" />
@@ -206,10 +194,7 @@
           and take control.
         </p>
         <div class="hero-actions">
-          <button
-            class="btn btn-primary"
-            @click="visible = true"
-          >
+          <button class="btn btn-primary" @click="visible = true">
             <svg
               width="16"
               height="16"
@@ -219,32 +204,14 @@
               stroke-width="2.5"
               stroke-linecap="round"
             >
-              <circle
-                cx="11"
-                cy="11"
-                r="8"
-              />
-              <line
-                x1="21"
-                y1="21"
-                x2="16.65"
-                y2="16.65"
-              />
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             Try live demo
             <kbd class="btn-kbd">⌘K</kbd>
           </button>
-          <a
-            href="https://github.com/yvng-jie/vue-cmdk"
-            target="_blank"
-            class="btn btn-outline"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-              fill="currentColor"
-            >
+          <a href="https://github.com/yvng-jie/vue-cmdk" target="_blank" class="btn btn-outline">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
               <path
                 d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
               />
@@ -275,10 +242,7 @@
     </section>
 
     <!-- ═══════════════ Live Demo ═══════════════ -->
-    <section
-      id="demo"
-      class="section"
-    >
+    <section id="demo" class="section">
       <div class="section-header">
         <h2 class="section-title">Live Demo</h2>
         <p class="section-desc">
@@ -304,10 +268,7 @@
 
       <div class="demo-box">
         <div class="demo-box-preview">
-          <button
-            class="btn btn-primary"
-            @click="visible = true"
-          >
+          <button class="btn btn-primary" @click="visible = true">
             <svg
               width="16"
               height="16"
@@ -317,17 +278,8 @@
               stroke-width="2.5"
               stroke-linecap="round"
             >
-              <circle
-                cx="11"
-                cy="11"
-                r="8"
-              />
-              <line
-                x1="21"
-                y1="21"
-                x2="16.65"
-                y2="16.65"
-              />
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             Open command palette
           </button>
@@ -346,10 +298,7 @@
     </section>
 
     <!-- ═══════════════ Features ═══════════════ -->
-    <section
-      id="features"
-      class="section"
-    >
+    <section id="features" class="section">
       <div class="section-header">
         <h2 class="section-title">Why vue-cmdk?</h2>
         <p class="section-desc">Everything you need, nothing you don't.</p>
@@ -371,12 +320,16 @@
         <div class="feature-card">
           <div class="feature-icon">💄</div>
           <h3>Unstyled</h3>
-          <p>Bring your own CSS. Zero opinions, full design control. Works with any design system.</p>
+          <p>
+            Bring your own CSS. Zero opinions, full design control. Works with any design system.
+          </p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🔍</div>
           <h3>Built-in Search</h3>
-          <p>Fast case-insensitive filtering with keyword matching. No extra dependencies needed.</p>
+          <p>
+            Fast case-insensitive filtering with keyword matching. No extra dependencies needed.
+          </p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">⌨️</div>
@@ -421,10 +374,7 @@
     </section>
 
     <!-- ═══════════════ Quick Start ═══════════════ -->
-    <section
-      id="quickstart"
-      class="section"
-    >
+    <section id="quickstart" class="section">
       <div class="section-header">
         <h2 class="section-title">Quick Start</h2>
         <p class="section-desc">Get started in under a minute.</p>
@@ -493,20 +443,12 @@ function onSelect(item: CommandItemData) {
     </section>
 
     <!-- ═══════════════ vs cmdk ═══════════════ -->
-    <section
-      id="comparison"
-      class="section"
-    >
+    <section id="comparison" class="section">
       <div class="section-header">
         <h2 class="section-title">vs React cmdk</h2>
         <p class="section-desc">
           Feature parity with the original
-          <a
-            href="https://github.com/pacocoursey/cmdk"
-            target="_blank"
-          >
-            cmdk
-          </a>
+          <a href="https://github.com/pacocoursey/cmdk" target="_blank"> cmdk </a>
           (React). Check the roadmap below.
         </p>
       </div>
@@ -522,15 +464,14 @@ function onSelect(item: CommandItemData) {
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="f in cmdkFeatures"
-              :key="f.feat"
-            >
+            <tr v-for="f in cmdkFeatures" :key="f.feat">
               <td class="td-feat">{{ f.feat }}</td>
               <td class="td-react">{{ f.react ? '✅' : '❌' }}</td>
               <td class="td-vue">{{ f.vue ? '✅' : '❌' }}</td>
               <td class="td-status">
-                <span :class="['status-badge', f.status]">{{ statusLabels[f.status] }} {{ f.status }}</span>
+                <span :class="['status-badge', f.status]"
+                  >{{ statusLabels[f.status] }} {{ f.status }}</span
+                >
               </td>
             </tr>
           </tbody>
@@ -539,10 +480,7 @@ function onSelect(item: CommandItemData) {
     </section>
 
     <!-- ═══════════════ API ═══════════════ -->
-    <section
-      id="api"
-      class="section"
-    >
+    <section id="api" class="section">
       <div class="section-header">
         <h2 class="section-title">API Reference</h2>
         <p class="section-desc">All components at a glance.</p>
@@ -666,42 +604,17 @@ function onSelect(item: CommandItemData) {
         </div>
         <p class="footer-text">
           Made with ❤️ for the Vue community. Inspired by
-          <a
-            href="https://github.com/pacocoursey/cmdk"
-            target="_blank"
-          >
-            cmdk
-          </a>
+          <a href="https://github.com/pacocoursey/cmdk" target="_blank"> cmdk </a>
           by
-          <a
-            href="https://twitter.com/pacocoursey"
-            target="_blank"
-          >
-            @pacocoursey
-          </a>
+          <a href="https://twitter.com/pacocoursey" target="_blank"> @pacocoursey </a>
           .
         </p>
         <div class="footer-links">
-          <a
-            href="https://github.com/yvng-jie/vue-cmdk"
-            target="_blank"
-          >
-            GitHub
-          </a>
+          <a href="https://github.com/yvng-jie/vue-cmdk" target="_blank"> GitHub </a>
           <span class="footer-dot">·</span>
-          <a
-            href="https://github.com/yvng-jie/vue-cmdk/issues"
-            target="_blank"
-          >
-            Issues
-          </a>
+          <a href="https://github.com/yvng-jie/vue-cmdk/issues" target="_blank"> Issues </a>
           <span class="footer-dot">·</span>
-          <a
-            href="https://www.npmjs.com/package/vue-cmdk"
-            target="_blank"
-          >
-            npm
-          </a>
+          <a href="https://www.npmjs.com/package/vue-cmdk" target="_blank"> npm </a>
           <span class="footer-dot">·</span>
           <span>MIT License</span>
         </div>
@@ -712,9 +625,9 @@ function onSelect(item: CommandItemData) {
     <Command.Dialog
       :visible="visible"
       :items="demoItems"
+      placeholder="Type a command or search..."
       @update:visible="visible = $event"
       @select="onSelect"
-      placeholder="Type a command or search..."
     />
   </div>
 </template>

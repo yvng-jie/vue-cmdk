@@ -1,19 +1,11 @@
 <script setup lang="ts">
-  const props = withDefaults(
-    defineProps<{
-      loading?: boolean
-    }>(),
-    {
-      loading: false,
-    },
-  )
+defineProps<{
+  loading?: boolean
+}>()
 </script>
 
 <template>
-  <div
-    v-if="loading"
-    data-cmdk-loading=""
-  >
+  <div v-if="loading" data-cmdk-loading="">
     <slot>
       <span>Loading...</span>
     </slot>
