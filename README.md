@@ -2,7 +2,8 @@
   <img src="https://img.shields.io/npm/v/vue-command-kit?color=blue&label=version" alt="npm">
   <img src="https://img.shields.io/badge/vue-3.4%2B-brightgreen" alt="vue">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="license">
-  <img src="https://img.shields.io/badge/bundle-3.4kB_gzip-green" alt="size">
+  <img src="https://img.shields.io/badge/bundle-5.0kB_gzip-green" alt="size">
+  <img src="https://img.shields.io/badge/tests-102_passed-brightgreen" alt="tests">
 </p>
 
 <h1 align="center">⌘K — vue-cmdk</h1>
@@ -22,11 +23,12 @@
 - **🔍 Built-in search** — Fast case-insensitive filtering with keyword matching
 - **⌨️ Keyboard-first** — Arrow keys, Enter, Escape — all built-in, no config needed
 - **🔊 Global shortcut** — Register shortcuts on items (e.g. `⌘S`) and they work globally
-- **📦 Tiny** — 3.4 kB gzipped, **zero runtime dependencies** (peer: `vue` only)
+- **📦 Tiny** — 5 kB gzipped, **zero runtime dependencies** (peer: `vue` only)
 - **🎯 TypeScript** — Full type inference and declaration files
 - **🔄 Dynamic items** — Pass items as a reactive array, swap anytime
 - **🛠 Custom filter** — Provide your own filter function
 - **♿ Accessible** — ARIA attributes, focus trap, `aria-live` region
+- **🧪 Tested** — 102 unit tests across 8 test suites
 
 ## 🚀 Install
 
@@ -267,11 +269,32 @@ Returns:
 
 | Format  | Size       |
 | ------- | ---------- |
-| ESM     | 11.8 kB    |
-| UMD     | 11.8 kB    |
-| Gzipped | **3.4 kB** |
+| ESM     | 17.0 kB    |
+| UMD     | 13.5 kB    |
+| Gzipped | **5.0 kB** |
 
 Zero runtime dependencies. Peer dependency only on `vue ^3.4.0`.
+
+## 🗺️ Roadmap
+
+### v0.2.0 — Upcoming
+
+| Feature                     | Description                                                                  |
+| --------------------------- | ---------------------------------------------------------------------------- |
+| `forceMount` prop           | Keep `CommandItem` / `CommandGroup` DOM mounted when hidden (for animations) |
+| Search highlight            | Highlight matching text in search results with `<mark>`                      |
+| `closeOnSelect` fix         | `selectCurrent()` respects the `closeOnSelect` prop                          |
+| `alwaysRender` on Separator | Control whether `CommandSeparator` always renders                            |
+| Dialog `container` prop     | Custom Teleport target for `CommandDialog`                                   |
+
+### v0.5.0 / v1.0.0 — Future
+
+| Feature                      | Description                                                      |
+| ---------------------------- | ---------------------------------------------------------------- |
+| Nested items / Pages         | Multi-level sub-menu navigation via value path matching          |
+| `autoValue`                  | Auto-detect item value from slot textContent                     |
+| `useCommandState()` selector | Subscribe to specific state slices, avoid full-object reactivity |
+| Programmatic focus           | Expose `focus()` on `CommandInput`                               |
 
 ## 🤝 Acknowledgements
 
@@ -314,6 +337,11 @@ pnpm dev
 | `pnpm dev`        | Start demo dev server at `localhost:5173` |
 | `pnpm build`      | Build the library + type declarations     |
 | `pnpm typecheck`  | Run TypeScript type checking              |
+| `pnpm test`       | Run unit tests (Vitest)                   |
+| `pnpm test:watch` | Run tests in watch mode                   |
+| `pnpm lint`       | ESLint + Prettier check                   |
+| `pnpm lint:fix`   | Auto-fix lint and formatting issues       |
+| `pnpm format`     | Format code with Prettier                 |
 | `pnpm preview`    | Preview production build                  |
 | `pnpm build:demo` | Build demo site to `dist-demo/`           |
 
@@ -321,6 +349,15 @@ pnpm dev
 
 ```
 src/
+├── __tests__/            # 8 test suites (102 tests)
+│   ├── useCommandMenu.test.ts
+│   ├── CommandDialog.test.ts
+│   ├── CommandList.test.ts
+│   ├── CommandInput.test.ts
+│   ├── CommandItem.test.ts
+│   ├── useCommandRoot.test.ts
+│   ├── parseShortcut.test.ts
+│   └── injectStrict.test.ts
 ├── useCommandMenu.ts     # core composable (state, filter, shortcuts)
 ├── useCommandRoot.ts     # shared composable (provide/inject wiring)
 ├── types.ts              # TypeScript type definitions
@@ -347,7 +384,7 @@ demo/
 ### Pull Request Process
 
 1. Fork the repo and create a feature branch from `main`
-2. Make your changes and run `pnpm typecheck && pnpm build`
+2. Make your changes and run `pnpm typecheck && pnpm test && pnpm build`
 3. Test your changes with `pnpm dev` (demo app)
 4. Update `CHANGELOG.md` with a description of your changes
 5. Submit a PR with a clear description of what and why
