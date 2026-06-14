@@ -3,10 +3,20 @@ import type { CommandItemData, CommandGroupData } from './types'
 
 export type FilterFn = (items: CommandItemData[], query: string) => CommandItemData[] | null
 
+export interface UseCommandMenuOptions {
+  /** Custom filter function */
+  filter?: FilterFn
+  /** When false, skip built-in filtering */
+  shouldFilter?: boolean
+  /** When false, keyboard navigation stops at boundaries */
+  loop?: boolean
+}
+
 export interface UseCommandMenuReturn {
   visible: Ref<boolean>
   searchQuery: Ref<string>
   activeIndex: Ref<number>
+  selectedValue: Ref<string | undefined>
   items: Ref<CommandItemData[]>
   toggle: () => void
   open: () => void
@@ -19,6 +29,8 @@ export interface UseCommandMenuReturn {
   selectPrev: () => void
   selectCurrent: () => void
 }
+
+const UNGROUPED_KEY = '__ungrouped__'
 
 /** Map display characters to KeyboardEvent modifier properties */
 const MODIFIER_MAP: Record<string, 'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey'> = {
@@ -65,12 +77,19 @@ function eventMatchesShortcut(e: KeyboardEvent, desc: ReturnType<typeof parseSho
 }
 
 export function useCommandMenu(
-  customFilter?: FilterFn,
+  optionsOrFilter?: UseCommandMenuOptions | FilterFn,
   onItemSelect?: (item: CommandItemData) => void,
 ): UseCommandMenuReturn {
+  // Normalize overload: allow passing a FilterFn directly as first arg
+  const opts: UseCommandMenuOptions =
+    typeof optionsOrFilter === 'function' ? { filter: optionsOrFilter } : (optionsOrFilter ?? {})
+
+  const { filter: customFilter, shouldFilter = true, loop = true } = opts
+
   const visible = ref(false)
   const searchQuery = ref('')
   const activeIndex = ref(0)
+  const selectedValue = ref<string | undefined>()
   const items = ref<CommandItemData[]>([])
 
   const toggle = () => {
@@ -101,18 +120,21 @@ export function useCommandMenu(
   function groupItems(filtered: CommandItemData[]): CommandGroupData[] {
     const map = new Map<string, CommandItemData[]>()
     for (const item of filtered) {
-      const key = item.group || '__ungrouped__'
-      if (!map.has(key)) map.set(key, [])
-      map.get(key)!.push(item)
+      const key = item.group || UNGROUPED_KEY
+      if (!map.has(key)) {
+        map.set(key, [item])
+      } else {
+        map.get(key)!.push(item)
+      }
     }
     const groups: CommandGroupData[] = []
     // Put ungrouped items first, then alphabetical groups
-    if (map.has('__ungrouped__')) {
-      groups.push({ heading: '', items: map.get('__ungrouped__')! })
-      map.delete('__ungrouped__')
+    if (map.has(UNGROUPED_KEY)) {
+      groups.push({ heading: '', items: map.get(UNGROUPED_KEY)! })
+      map.delete(UNGROUPED_KEY)
     }
-    for (const [heading, groupItems] of map) {
-      groups.push({ heading, items: groupItems })
+    for (const heading of [...map.keys()].sort()) {
+      groups.push({ heading, items: map.get(heading)! })
     }
     return groups
   }
@@ -122,6 +144,7 @@ export function useCommandMenu(
       const result = customFilter(items.value, searchQuery.value)
       if (result !== null) return result
     }
+    if (!shouldFilter) return items.value
     return defaultFilter(items.value, searchQuery.value)
   })
   const groupedItems = computed(() => groupItems(filteredItems.value))
@@ -129,18 +152,27 @@ export function useCommandMenu(
   function selectNext() {
     const total = filteredItems.value.length
     if (total === 0) return
-    activeIndex.value = (activeIndex.value + 1) % total
+    if (loop) {
+      activeIndex.value = (activeIndex.value + 1) % total
+    } else {
+      activeIndex.value = Math.min(activeIndex.value + 1, total - 1)
+    }
   }
 
   function selectPrev() {
     const total = filteredItems.value.length
     if (total === 0) return
-    activeIndex.value = (activeIndex.value - 1 + total) % total
+    if (loop) {
+      activeIndex.value = (activeIndex.value - 1 + total) % total
+    } else {
+      activeIndex.value = Math.max(activeIndex.value - 1, 0)
+    }
   }
 
   function selectCurrent() {
     const item = filteredItems.value[activeIndex.value]
     if (item && !item.disabled) {
+      selectedValue.value = item.value
       item.onSelect?.(item)
       close()
     }
@@ -154,6 +186,7 @@ export function useCommandMenu(
       if (eventMatchesShortcut(e, desc)) {
         e.preventDefault()
         e.stopPropagation()
+        selectedValue.value = item.value
         item.onSelect?.(item)
         onItemSelect?.(item)
         close()
@@ -162,8 +195,9 @@ export function useCommandMenu(
     }
   }
 
-  // Rebuild shortcut map whenever items change (already watched by parent),
-  // and register global listener if items have shortcuts
+  // Rebuild shortcut map whenever items change (deep: true also catches
+  // in-place mutations like push/splice), and register global listener
+  // if items have shortcuts
   let cleanupShortcuts: (() => void) | null = null
 
   watch(
@@ -179,7 +213,7 @@ export function useCommandMenu(
         cleanupShortcuts = () => window.removeEventListener('keydown', onShortcutKeydown)
       }
     },
-    { immediate: true, flush: 'post' },
+    { immediate: true, deep: true, flush: 'post' },
   )
 
   onUnmounted(() => {
@@ -190,6 +224,7 @@ export function useCommandMenu(
     visible,
     searchQuery,
     activeIndex,
+    selectedValue,
     items,
     toggle,
     open,

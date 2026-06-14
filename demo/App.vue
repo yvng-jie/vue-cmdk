@@ -103,10 +103,10 @@ function scrollTo(id: string) {
 
 /* ── Feature flags for vs-cmdk table ── */
 const cmdkFeatures = [
-  { feat: 'Command root value / onValueChange', react: true, vue: false, status: 'planned' },
-  { feat: 'Command root shouldFilter', react: true, vue: false, status: 'planned' },
-  { feat: 'Command root loop', react: true, vue: false, status: 'planned' },
-  { feat: 'Command root label (aria-label)', react: true, vue: false, status: 'planned' },
+  { feat: 'Command root value / onValueChange', react: true, vue: true, status: 'done' },
+  { feat: 'Command root shouldFilter', react: true, vue: true, status: 'done' },
+  { feat: 'Command root loop', react: true, vue: true, status: 'done' },
+  { feat: 'Command root label (aria-label)', react: true, vue: true, status: 'done' },
   { feat: 'Command.Dialog open / onOpenChange', react: true, vue: true, status: 'done' },
   { feat: 'Command.Dialog container (portal)', react: true, vue: false, status: 'future' },
   { feat: 'Command.Input value / onValueChange', react: true, vue: true, status: 'done' },

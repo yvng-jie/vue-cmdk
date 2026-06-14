@@ -1,6 +1,6 @@
-import { computed, provide } from 'vue'
+import { computed, provide, watch } from 'vue'
 import type { CommandItemData, CommandRootEmits } from './types'
-import { useCommandMenu, type FilterFn } from './useCommandMenu'
+import { useCommandMenu, type FilterFn, type UseCommandMenuOptions } from './useCommandMenu'
 import {
   CMDK_STATE,
   CMDK_LOADING,
@@ -13,6 +13,9 @@ export interface UseCommandRootOptions {
   filter?: FilterFn
   loading?: boolean
   closeOnSelect?: boolean
+  shouldFilter?: boolean
+  loop?: boolean
+  value?: string
 }
 
 export interface UseCommandRootReturn {
@@ -32,13 +35,31 @@ export function useCommandRoot(
   emit: CommandRootEmits,
   onItemSelect?: (item: CommandItemData) => void,
 ): UseCommandRootReturn {
-  const { filter, loading = false, closeOnSelect = true } = options
+  const {
+    filter,
+    loading = false,
+    closeOnSelect = true,
+    shouldFilter = true,
+    loop = true,
+  } = options
 
-  const state = useCommandMenu(filter, (item: CommandItemData) => {
+  const menuOptions: UseCommandMenuOptions = { filter, shouldFilter, loop }
+
+  const state = useCommandMenu(menuOptions, (item: CommandItemData) => {
     emit('select', item)
+    emit('update:value', item.value)
     onItemSelect?.(item)
     if (closeOnSelect) state.close()
   })
+
+  // Sync controlled value prop → internal selectedValue
+  watch(
+    () => options.value,
+    (v) => {
+      if (v !== undefined) state.selectedValue.value = v
+    },
+    { immediate: true },
+  )
 
   provide(CMDK_STATE, state)
   provide(CMDK_LOADING, () => loading)
