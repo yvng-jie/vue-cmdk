@@ -15,86 +15,18 @@
   <img src="./demo.gif" alt="vue-cmdk demo" width="720">
 </p>
 
-## 🧠 Inspiration
-
-This project is heavily inspired by two great projects:
-
-| Project | Author | Description |
-| --- | --- | --- |
-| [`vue-command-palette`](https://github.com/xiaoluoboding/vue-command-palette) | [@xiaoluoboding](https://github.com/xiaoluoboding) | The first composable command palette for Vue, with 590 ★ |
-| [`cmdk`](https://github.com/pacocoursey/cmdk) | [@pacocoursey](https://github.com/pacocoursey) | Fast, unstyled command menu React component (10k+ ★) |
-
-### Why another one?
-
-[`vue-command-palette`](https://github.com/xiaoluoboding/vue-command-palette) pioneered the ⌘K experience for Vue. Big thanks to [@xiaoluoboding](https://github.com/xiaoluoboding) for the original idea and work 🙌
-
-However, the project has been **inactive since September 2023** — 9 issues remain unanswered, no dependencies have been updated in years, and the bundle size is 28 kB. The Vue ecosystem deserves a **well-maintained, lightweight alternative** that keeps up with modern standards.
-
-**vue-cmdk** is built to fill that gap: same compound component API, zero dependencies, half the size, with full TypeScript support and a commitment to ongoing maintenance.
-
-### vs vue-command-palette (legacy reference)
-
-| Feature          |  `vue-command-palette`   |  `vue-cmdk`   |
-| ---------------- | :----------------------: | :-----------: |
-| 📦 Bundle (min)  |         28.2 kB          |  **11.8 kB**  |
-| 📦 Bundle (gzip) |          9.6 kB          |  **3.4 kB**   |
-| 🔍 Search        |   fuse.js (extra dep)    | **Built-in**  |
-| 📋 TypeScript    |         Partial          |   **Full**    |
-| 🔄 Async items   |            ❌            |      ✅       |
-| 🧩 Custom filter |            ❌            |      ✅       |
-| 🔒 Focus trap    |            ❌            |      ✅       |
-| 🧹 Dependencies  | 3 (fuse.js, nanoid, ...) |     **0**     |
-| 🔧 Maintenance   |  ❌ Inactive since 2023  | ✅ **Active** |
-
----
-
 ## ✨ Features
 
-- **🧩 Compound component API** — `<Command.Dialog>`, `<Command.List>`, `<Command.Item>`, etc.
+- **🧩 Compound component API** — `<Command.Dialog>`, `<Command.Input>`, `<Command.Item>`, etc.
 - **💄 Unstyled** — Bring your own CSS, zero opinions, full design control
 - **🔍 Built-in search** — Fast case-insensitive filtering with keyword matching
 - **⌨️ Keyboard-first** — Arrow keys, Enter, Escape — all built-in, no config needed
+- **🔊 Global shortcut** — Register shortcuts on items (e.g. `⌘S`) and they work globally
 - **📦 Tiny** — 3.4 kB gzipped, **zero runtime dependencies** (peer: `vue` only)
 - **🎯 TypeScript** — Full type inference and declaration files
 - **🔄 Dynamic items** — Pass items as a reactive array, swap anytime
 - **🛠 Custom filter** — Provide your own filter function
 - **♿ Accessible** — ARIA attributes, focus trap, `aria-live` region
-
-## 📊 Comparison with React cmdk
-
-`vue-cmdk` is a Vue 3 port inspired by the excellent [`cmdk`](https://github.com/pacocoursey/cmdk) (React). Below is the current feature parity status:
-
-| #   | Feature                                      |  React `cmdk`   |    `vue-cmdk`    |   Status   |
-| --- | -------------------------------------------- | :-------------: | :--------------: | :--------: |
-| 1   | `Command` root `value` / `onValueChange`     |       ✅        |        ❌        | 📋 Planned |
-| 2   | `Command` root `shouldFilter`                |       ✅        |        ❌        | 📋 Planned |
-| 3   | `Command` root `loop`                        |       ✅        |        ❌        | 📋 Planned |
-| 4   | `Command` root `label` (aria-label)          |       ✅        |        ❌        | 📋 Planned |
-| 5   | `Command.Dialog` `open` / `onOpenChange`     |    ✅ `open`    |   ✅ `visible`   |     ✅     |
-| 6   | `Command.Dialog` `container` (portal target) |       ✅        |        ❌        | 💡 Future  |
-| 7   | `Command.Input` `value` / `onValueChange`    |       ✅        | ✅ `searchQuery` |     ✅     |
-| 8   | `Command.Item` `forceMount`                  |       ✅        |        ❌        | 📋 Planned |
-| 9   | `Command.Item` `keywords`                    |       ✅        |        ✅        |     ✅     |
-| 10  | `Command.Item` `onSelect`                    |       ✅        |        ✅        |     ✅     |
-| 11  | `Command.Item` auto value from textContent   |       ✅        |        ❌        | 📋 Planned |
-| 12  | `Command.Group` `forceMount`                 |       ✅        |        ❌        | 📋 Planned |
-| 13  | `Command.Group` `heading`                    |       ✅        |        ✅        |     ✅     |
-| 14  | `Command.Separator` `alwaysRender`           |       ✅        |        ❌        | 💡 Future  |
-| 15  | `Command.Empty`                              |       ✅        |        ✅        |     ✅     |
-| 16  | `Command.Loading`                            |       ✅        |        ✅        |     ✅     |
-| 17  | `useCommandState()` state selector           |       ✅        |        ❌        | 📋 Planned |
-| 18  | **Nested items / Pages**                     |  ✅ (pattern)   |        ❌        | 📋 Planned |
-| 19  | **Built-in search / filtering**              |       ✅        |        ✅        |     ✅     |
-| 20  | **Custom filter function**                   | ✅ (rank-based) | ✅ (item-based)  |     ✅     |
-| 21  | **Global shortcut listener**                 |   ❌ (manual)   |  ✅ (built-in)   |  ✅ Bonus  |
-| 22  | **Keyboard navigation**                      |       ✅        |        ✅        |     ✅     |
-| 23  | **Focus trap**                               |   ✅ (Radix)    |   ✅ (custom)    |     ✅     |
-| 24  | **Zero dependencies**                        |  ❌ (Radix UI)  |   ✅ (0 deps)    | ✅ Better  |
-| 25  | **TypeScript**                               |       ✅        |        ✅        |     ✅     |
-| 26  | **Unstyled**                                 |       ✅        |        ✅        |     ✅     |
-| 27  | **Bundle size (gzip)**                       |      ~7 kB      |    **3.4 kB**    | ✅ Smaller |
-
-> **Legend** — ✅ Done · 📋 High/Medium priority · 💡 Low priority / Nice to have
 
 ## 🚀 Install
 
@@ -108,20 +40,20 @@ npm install vue-command-kit
 
 ```vue
 <script setup lang="ts">
-  import { ref } from 'vue'
-  import { Command } from 'vue-command-kit'
-  import type { CommandItemData } from 'vue-command-kit'
+import { ref } from 'vue'
+import { Command } from 'vue-command-kit'
+import type { CommandItemData } from 'vue-command-kit'
 
-  const visible = ref(false)
+const visible = ref(false)
 
-  const items: CommandItemData[] = [
-    { value: 'settings', label: 'Open settings', shortcut: '⌘,' },
-    { value: 'home', label: 'Go to home', shortcut: '⌘H' },
-  ]
+const items: CommandItemData[] = [
+  { value: 'settings', label: 'Open settings', shortcut: '⌘,' },
+  { value: 'home', label: 'Go to home', shortcut: '⌘H' },
+]
 
-  function onSelect(item: CommandItemData) {
-    console.log('selected:', item.value)
-  }
+function onSelect(item: CommandItemData) {
+  console.log('selected:', item.value)
+}
 </script>
 
 <template>
@@ -157,19 +89,15 @@ npm install vue-command-kit
 
 ```vue
 <script setup lang="ts">
-  import { Command } from 'vue-command-kit'
+import { Command } from 'vue-command-kit'
 
-  function myFilter(items: CommandItemData[], query: string) {
-    // Return filtered items, or null to use default filter
-    return items.filter((item) => item.label?.includes(query))
-  }
+function myFilter(items: CommandItemData[], query: string) {
+  return items.filter((item) => item.label?.includes(query))
+}
 </script>
 
 <template>
-  <Command.Dialog
-    :filter="myFilter"
-    ...
-  />
+  <Command.Dialog :filter="myFilter" ... />
 </template>
 ```
 
@@ -177,17 +105,17 @@ npm install vue-command-kit
 
 ```vue
 <script setup lang="ts">
-  import { ref } from 'vue'
-  import { Command } from 'vue-command-kit'
-  import type { CommandItemData } from 'vue-command-kit'
+import { ref } from 'vue'
+import { Command } from 'vue-command-kit'
+import type { CommandItemData } from 'vue-command-kit'
 
-  const visible = ref(false)
-  const query = ref('')
+const visible = ref(false)
+const query = ref('')
 
-  const items: CommandItemData[] = [
-    { value: 'home', label: 'Home', keywords: ['dashboard'] },
-    { value: 'settings', label: 'Settings' },
-  ]
+const items: CommandItemData[] = [
+  { value: 'home', label: 'Home', keywords: ['dashboard'] },
+  { value: 'settings', label: 'Settings' },
+]
 </script>
 
 <template>
@@ -204,26 +132,26 @@ npm install vue-command-kit
 
 ```vue
 <script setup lang="ts">
-  import { ref, watch } from 'vue'
-  import { Command } from 'vue-command-kit'
-  import type { CommandItemData } from 'vue-command-kit'
+import { ref, watch } from 'vue'
+import { Command } from 'vue-command-kit'
+import type { CommandItemData } from 'vue-command-kit'
 
-  const visible = ref(false)
-  const loading = ref(false)
-  const items = ref<CommandItemData[]>([])
+const visible = ref(false)
+const loading = ref(false)
+const items = ref<CommandItemData[]>([])
 
-  watch(visible, async (v) => {
-    if (v) {
-      loading.value = true
-      const data = await fetch('/api/commands').then((r) => r.json())
-      items.value = data.map((d: any) => ({
-        value: d.id,
-        label: d.name,
-        group: d.category,
-      }))
-      loading.value = false
-    }
-  })
+watch(visible, async (v) => {
+  if (v) {
+    loading.value = true
+    const data = await fetch('/api/commands').then((r) => r.json())
+    items.value = data.map((d: any) => ({
+      value: d.id,
+      label: d.name,
+      group: d.category,
+    }))
+    loading.value = false
+  }
+})
 </script>
 
 <template>
@@ -239,18 +167,36 @@ npm install vue-command-kit
 
 ## 📖 API
 
+### Components
+
+| Component             | Description                                    |
+| --------------------- | ---------------------------------------------- |
+| `<Command.Dialog>`    | Modal dialog with mask, transition, focus trap |
+| `<Command.Menu>`      | Inline command menu (non-modal) with slots     |
+| `<Command.Input>`     | Search input with keyboard navigation          |
+| `<Command.List>`      | Scrollable list rendering grouped items        |
+| `<Command.Group>`     | Group of items with heading                    |
+| `<Command.Item>`      | Single selectable command item                 |
+| `<Command.Empty>`     | Shown when no results match                    |
+| `<Command.Separator>` | Visual separator                               |
+| `<Command.Loading>`   | Loading indicator                              |
+
 ### `<Command.Dialog>` Props
 
-| Prop            | Type                | Default               | Description                          |
-| --------------- | ------------------- | --------------------- | ------------------------------------ |
-| `visible`       | `boolean`           | `false`               | Controlled open state                |
-| `items`         | `CommandItemData[]` | `[]`                  | Items to display                     |
-| `searchQuery`   | `string`            | `''`                  | Search query (`v-model:searchQuery`) |
-| `placeholder`   | `string`            | `'Type a command...'` | Input placeholder                    |
-| `filter`        | `FilterFn`          | —                     | Custom filter function               |
-| `loading`       | `boolean`           | `false`               | Show loading state                   |
-| `autoFocus`     | `boolean`           | `true`                | Auto-focus input on open             |
-| `closeOnSelect` | `boolean`           | `true`                | Close dialog after selection         |
+| Prop            | Type                | Default                         | Description                                    |
+| --------------- | ------------------- | ------------------------------- | ---------------------------------------------- |
+| `visible`       | `boolean`           | `false`                         | Controlled open state                          |
+| `items`         | `CommandItemData[]` | `[]`                            | Items to display                               |
+| `searchQuery`   | `string`            | `''`                            | Search query (`v-model:searchQuery`)           |
+| `value`         | `string`            | —                               | Selected item value (`v-model:value`)          |
+| `placeholder`   | `string`            | `'Type a command or search...'` | Input placeholder                              |
+| `filter`        | `FilterFn`          | —                               | Custom filter function                         |
+| `loading`       | `boolean`           | `false`                         | Show loading state                             |
+| `autoFocus`     | `boolean`           | `true`                          | Auto-focus input on open                       |
+| `closeOnSelect` | `boolean`           | `true`                          | Close dialog after selection                   |
+| `shouldFilter`  | `boolean`           | `true`                          | When `false`, skip built-in filtering          |
+| `loop`          | `boolean`           | `true`                          | When `false`, keyboard nav stops at boundaries |
+| `label`         | `string`            | `'Command menu'`                | `aria-label` for the dialog                    |
 
 ### `<Command.Dialog>` Events
 
@@ -258,38 +204,35 @@ npm install vue-command-kit
 | -------------------- | ----------------- | --------------------------------- |
 | `update:visible`     | `boolean`         | Emitted when visibility changes   |
 | `update:searchQuery` | `string`          | Emitted when search query changes |
+| `update:value`       | `string`          | Emitted when an item is selected  |
 | `select`             | `CommandItemData` | Emitted when an item is selected  |
-
-### Components
-
-| Component             | Description                                    |
-| --------------------- | ---------------------------------------------- |
-| `<Command.Dialog>`    | Modal dialog with mask, transition, focus trap |
-| `<Command.Menu>`      | Inline command menu (non-modal)                |
-| `<Command.Input>`     | Search input with keyboard navigation          |
-| `<Command.List>`      | Scrollable list rendering `groupedItems`       |
-| `<Command.Group>`     | Group of items with heading                    |
-| `<Command.Item>`      | Single selectable command item                 |
-| `<Command.Empty>`     | Shown when no results match                    |
-| `<Command.Separator>` | Visual separator                               |
-| `<Command.Loading>`   | Loading indicator                              |
 
 ### `CommandItemData`
 
 ```ts
 interface CommandItemData {
+  /** Unique value for this item */
   value: string
+  /** Display label (falls back to value) */
   label?: string
+  /** Optional keywords for search matching */
   keywords?: string[]
+  /** Optional shortcut display (e.g. "⌘S") */
   shortcut?: string
+  /** Group this item belongs to */
   group?: string
+  /** Disabled state */
   disabled?: boolean
-  icon?: Component
+  /** Custom render icon or prefix */
+  icon?: Component | VNode | (() => VNode)
+  /** Callback when item is selected */
   onSelect?: (item: CommandItemData) => void
 }
 ```
 
 ### `useCommandMenu()` Composable
+
+Use the composable for programmatic control outside of `Command.Dialog` / `Command.Menu`.
 
 ```ts
 import { useCommandMenu } from 'vue-command-kit'
@@ -301,6 +244,38 @@ menu.open()
 menu.close()
 menu.toggle()
 ```
+
+Returns:
+
+| Return            | Type                      | Description                                      |
+| ----------------- | ------------------------- | ------------------------------------------------ |
+| `visible`         | `Ref<boolean>`            | Open state                                       |
+| `searchQuery`     | `Ref<string>`             | Current search query                             |
+| `activeIndex`     | `Ref<number>`             | Currently highlighted item index                 |
+| `items`           | `Ref<CommandItemData[]>`  | Raw item list                                    |
+| `filteredItems`   | `ComputedRef<...>`        | Items after filtering                            |
+| `groupedItems`    | `ComputedRef<...>`        | Filtered items grouped by `group` field          |
+| `open()`          | `() => void`              | Open the menu                                    |
+| `close()`         | `() => void`              | Close and reset search                           |
+| `toggle()`        | `() => void`              | Toggle open state                                |
+| `selectNext()`    | `() => void`              | Move active index down                           |
+| `selectPrev()`    | `() => void`              | Move active index up                             |
+| `selectCurrent()` | `() => void`              | Select currently active item                     |
+| `defaultFilter()` | `(items, query) => items` | Default filter implementation (case-insensitive) |
+
+## 📦 Bundle Size
+
+| Format  | Size       |
+| ------- | ---------- |
+| ESM     | 11.8 kB    |
+| UMD     | 11.8 kB    |
+| Gzipped | **3.4 kB** |
+
+Zero runtime dependencies. Peer dependency only on `vue ^3.4.0`.
+
+## 🤝 Acknowledgements
+
+vue-cmdk is inspired by [`cmdk`](https://github.com/pacocoursey/cmdk) by [@pacocoursey](https://github.com/pacocoursey) — a fast, unstyled command menu for React.
 
 ### Keyboard
 

@@ -36,12 +36,21 @@ export interface CommandRootProps {
   closeOnSelect?: boolean
   /** Whether the menu is loading */
   loading?: boolean
+  /** aria-label for the dialog/menu */
+  label?: string
+  /** When false, skip built-in filtering and show all items (custom filter still applies) */
+  shouldFilter?: boolean
+  /** When false, keyboard navigation stops at boundaries instead of wrapping around */
+  loop?: boolean
+  /** Controlled selected item value (v-model) */
+  value?: string
 }
 
 /** Emitted events */
 export interface CommandRootEmits {
   (e: 'update:visible', value: boolean): void
   (e: 'update:searchQuery', value: string): void
+  (e: 'update:value', value: string): void
   (e: 'select', item: CommandItemData): void
 }
 
