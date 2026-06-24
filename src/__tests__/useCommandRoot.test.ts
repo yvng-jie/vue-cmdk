@@ -46,6 +46,14 @@ describe('useCommandRoot', () => {
     expect((selectCall!.args[0] as CommandItemData).value).toBe('home')
   })
 
+  it('handleSelect emits update:value event', () => {
+    const { handleSelect } = useCommandRoot({}, emit.emit)
+    handleSelect({ value: 'home' })
+    const updateCall = emit.calls.find((c) => c.event === 'update:value')
+    expect(updateCall).toBeTruthy()
+    expect(updateCall!.args[0]).toBe('home')
+  })
+
   it('handleSelect calls onItemSelect callback', () => {
     let selected: CommandItemData | undefined
     const { handleSelect } = useCommandRoot({}, emit.emit, (item) => {

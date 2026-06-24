@@ -4,7 +4,7 @@ import type { CommandRootProps, CommandRootEmits } from './types'
 import { useCommandRoot } from './useCommandRoot'
 
 const props = withDefaults(defineProps<CommandRootProps>(), {
-  visible: true,
+  visible: false,
   placeholder: 'Type a command or search...',
   autoFocus: true,
   closeOnSelect: true,
@@ -55,7 +55,13 @@ defineExpose({
 </script>
 
 <template>
-  <div data-cmdk-root="" role="combobox" aria-expanded="true" aria-haspopup="listbox">
+  <div
+    data-cmdk-root=""
+    role="combobox"
+    :aria-expanded="state.visible.value"
+    :aria-label="label ?? 'Command menu'"
+    aria-haspopup="listbox"
+  >
     <slot
       :items="state.items"
       :filtered-items="state.filteredItems"

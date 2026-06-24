@@ -1,6 +1,7 @@
 <script setup lang="ts">
 defineProps<{
   heading?: string
+  forceMount?: boolean
 }>()
 </script>
 

@@ -66,6 +66,7 @@ export function useCommandRoot(
   provide(CMDK_CLOSE_ON_SELECT, () => closeOnSelect)
   provide(CMDK_SELECT_HANDLER, (item: CommandItemData) => {
     emit('select', item)
+    emit('update:value', item.value)
     onItemSelect?.(item)
     if (closeOnSelect) state.close()
   })
@@ -80,6 +81,7 @@ export function useCommandRoot(
 
   function handleSelect(item: CommandItemData) {
     emit('select', item)
+    emit('update:value', item.value)
     onItemSelect?.(item)
     if (closeOnSelect) state.close()
   }

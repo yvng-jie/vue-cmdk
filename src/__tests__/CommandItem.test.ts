@@ -1,12 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import CommandItem from '../CommandItem.vue'
-import {
-  CMDK_STATE,
-  CMDK_CLOSE_ON_SELECT,
-  CMDK_SELECT_HANDLER,
-  CMDK_ITEM_INDEX_MAP,
-} from '../injectionKeys'
+import { CMDK_STATE, CMDK_SELECT_HANDLER, CMDK_ITEM_INDEX_MAP } from '../injectionKeys'
 import { ref, computed } from 'vue'
 import type { UseCommandMenuReturn } from '../useCommandMenu'
 import type { CommandItemData } from '../types'
@@ -58,7 +53,6 @@ function mountItem(props: any, state?: UseCommandMenuReturn) {
     global: {
       provide: {
         [CMDK_STATE as symbol]: s,
-        [CMDK_CLOSE_ON_SELECT as symbol]: () => true,
         [CMDK_SELECT_HANDLER as symbol]: () => {},
         [CMDK_ITEM_INDEX_MAP as symbol]: () =>
           new Map<string, number>([
@@ -132,5 +126,13 @@ describe('CommandItem', () => {
     const wrapper = mountItem({ value: 'test', label: 'Test' })
     expect(wrapper.attributes('role')).toBe('option')
     expect(wrapper.attributes('data-value')).toBe('test')
+  })
+
+  it('renders highlighted label when search query matches', async () => {
+    const state = createMockState()
+    state.searchQuery.value = 'Home'
+    const wrapper = mountItem({ value: 'home', label: 'Home' }, state)
+    expect(wrapper.find('mark').exists()).toBe(true)
+    expect(wrapper.find('mark').text()).toBe('Home')
   })
 })

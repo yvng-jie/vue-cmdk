@@ -103,7 +103,7 @@ function onKeydown(e: KeyboardEvent) {
 </script>
 
 <template>
-  <Teleport to="body">
+  <Teleport :to="container ?? 'body'">
     <Transition name="cmdk-dialog">
       <div
         v-if="state.visible.value"

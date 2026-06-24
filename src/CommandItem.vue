@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import { inject, computed, isVNode, type Component, type VNode } from 'vue'
 import type { CommandItemData } from './types'
-import {
-  CMDK_STATE,
-  CMDK_CLOSE_ON_SELECT,
-  CMDK_SELECT_HANDLER,
-  CMDK_ITEM_INDEX_MAP,
-} from './injectionKeys'
+import { CMDK_STATE, CMDK_SELECT_HANDLER, CMDK_ITEM_INDEX_MAP } from './injectionKeys'
 import { injectStrict } from './utils/injectStrict'
+import { highlightText } from './utils/highlight'
 
 const props = withDefaults(
   defineProps<{
@@ -16,11 +12,13 @@ const props = withDefaults(
     keywords?: string[]
     shortcut?: string
     disabled?: boolean
+    forceMount?: boolean
     icon?: Component | VNode | (() => VNode)
     onSelect?: (item: CommandItemData) => void
   }>(),
   {
     disabled: false,
+    forceMount: false,
     label: undefined,
     keywords: undefined,
     shortcut: undefined,
@@ -40,6 +38,7 @@ const itemData = computed<CommandItemData>(() => ({
   keywords: props.keywords,
   shortcut: props.shortcut,
   disabled: props.disabled,
+  forceMount: props.forceMount,
   icon: props.icon,
   onSelect: props.onSelect,
 }))
@@ -63,14 +62,19 @@ const isActive = computed(() => {
   return active?.value === props.value
 })
 
-const getCloseOnSelect = inject(CMDK_CLOSE_ON_SELECT, () => true)
 const onItemSelect = inject(CMDK_SELECT_HANDLER, () => {})
+
+const displayLabel = computed(() => props.label || props.value)
+const highlightedLabel = computed(() => {
+  const query = state.searchQuery.value
+  if (!query.trim()) return null
+  return highlightText(displayLabel.value, query)
+})
 
 function handleClick() {
   if (props.disabled) return
   props.onSelect?.(itemData.value)
   onItemSelect(itemData.value)
-  if (getCloseOnSelect()) state.close()
 }
 </script>
 
@@ -95,7 +99,15 @@ function handleClick() {
       <span v-if="iconComponent" data-cmdk-item-icon="">
         <component :is="iconComponent" />
       </span>
-      <span data-cmdk-item-label>{{ label || value }}</span>
+      <span data-cmdk-item-label>
+        <template v-if="highlightedLabel">
+          <template v-for="(segment, idx) in highlightedLabel" :key="idx">
+            <mark v-if="segment.highlighted">{{ segment.text }}</mark>
+            <span v-else>{{ segment.text }}</span>
+          </template>
+        </template>
+        <template v-else>{{ displayLabel }}</template>
+      </span>
       <span v-if="shortcut" data-cmdk-item-shortcut>
         {{ shortcut }}
       </span>

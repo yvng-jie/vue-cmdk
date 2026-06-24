@@ -16,6 +16,8 @@ export interface CommandItemData {
   disabled?: boolean
   /** Custom render icon or prefix */
   icon?: Component | VNode | (() => VNode)
+  /** Whether to force this item to always appear in filtered results */
+  forceMount?: boolean
   /** Callback when item is selected */
   onSelect?: (item: CommandItemData) => void
 }
@@ -58,6 +60,8 @@ export interface CommandRootEmits {
 export interface CommandDialogProps extends CommandRootProps {
   /** Command items to display */
   items?: CommandItemData[]
+  /** Teleport target for the dialog (defaults to 'body') */
+  container?: string | HTMLElement
 }
 
 /** Group definition */

@@ -88,6 +88,42 @@ describe('useCommandMenu', () => {
     })
   })
 
+  describe('forceMount', () => {
+    it('keeps forceMount items visible even when they do not match the query', () => {
+      menu.items.value.push({
+        value: 'secret',
+        label: 'Secret Item',
+        forceMount: true,
+      })
+      menu.searchQuery.value = 'nonexistent'
+      const results = menu.filteredItems.value
+      expect(results.some((i) => i.value === 'secret')).toBe(true)
+    })
+
+    it('filters non-forceMount items normally', () => {
+      menu.items.value.push({
+        value: 'secret',
+        label: 'Secret Item',
+        forceMount: true,
+      })
+      menu.searchQuery.value = 'home'
+      const results = menu.filteredItems.value
+      expect(results.some((i) => i.value === 'secret')).toBe(true)
+      expect(results.some((i) => i.value === 'home')).toBe(true)
+      expect(results.some((i) => i.value === 'settings')).toBe(false)
+    })
+
+    it('shows all items when no query (forceMount has no effect)', () => {
+      menu.items.value.push({
+        value: 'secret',
+        label: 'Secret Item',
+        forceMount: true,
+      })
+      const results = menu.filteredItems.value
+      expect(results).toHaveLength(6)
+    })
+  })
+
   describe('filteredItems', () => {
     it('returns all items when no query', () => {
       expect(menu.filteredItems.value).toHaveLength(5)
@@ -206,6 +242,17 @@ describe('useCommandMenu', () => {
       menu.open()
       menu.selectCurrent()
       expect(selected).toBe(false)
+    })
+
+    it('calls onItemSelect callback', () => {
+      let callbackItem: CommandItemData | undefined
+      const m = useCommandMenu(undefined, (item) => {
+        callbackItem = item
+      })
+      m.items.value = createItems()
+      m.open()
+      m.selectCurrent()
+      expect(callbackItem?.value).toBe('home')
     })
   })
 

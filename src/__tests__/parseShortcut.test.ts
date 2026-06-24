@@ -1,49 +1,5 @@
 import { describe, it, expect } from 'vitest'
-
-// Direct unit tests for the private parseShortcut / eventMatchesShortcut
-// by re-implementing the logic inline. We test the actual functions by
-// importing from the module.
-
-// Since parseShortcut is not exported, we test it through the public API
-// by mounting a component.  For unit-level coverage we duplicate the
-// relevant code here to keep it isolated.
-
-function parseShortcut(shortcut: string): {
-  key: string
-  metaKey?: boolean
-  ctrlKey?: boolean
-  altKey?: boolean
-  shiftKey?: boolean
-} | null {
-  if (!shortcut) return null
-  const MODIFIER_MAP: Record<string, 'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey'> = {
-    '⌘': 'metaKey',
-    '⌃': 'ctrlKey',
-    '⌥': 'altKey',
-    '⇧': 'shiftKey',
-  }
-  const MODIFIER_PATTERN = /^([⌘⌃⌥⇧]+)(.+)$/
-  const match = MODIFIER_PATTERN.exec(shortcut)
-  if (!match) return { key: shortcut.toLowerCase() }
-  const [, modSymbols, key] = match
-  const mods: Partial<Record<'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey', boolean>> = {}
-  for (const ch of modSymbols) {
-    const prop = MODIFIER_MAP[ch]
-    if (prop) mods[prop] = true
-  }
-  return { ...mods, key: key.toLowerCase() }
-}
-
-function eventMatchesShortcut(e: KeyboardEvent, desc: ReturnType<typeof parseShortcut>): boolean {
-  if (!desc) return false
-  return (
-    e.key.toLowerCase() === desc.key &&
-    !!e.metaKey === !!desc.metaKey &&
-    !!e.ctrlKey === !!desc.ctrlKey &&
-    !!e.altKey === !!desc.altKey &&
-    !!e.shiftKey === !!desc.shiftKey
-  )
-}
+import { parseShortcut, eventMatchesShortcut } from '../utils/shortcut'
 
 function createEvent(overrides: Partial<KeyboardEvent> = {}): KeyboardEvent {
   return {

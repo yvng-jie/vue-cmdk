@@ -1,5 +1,6 @@
 import { ref, computed, watch, onUnmounted, type Ref, type ComputedRef } from 'vue'
 import type { CommandItemData, CommandGroupData } from './types'
+import { parseShortcut, eventMatchesShortcut } from './utils/shortcut'
 
 export type FilterFn = (items: CommandItemData[], query: string) => CommandItemData[] | null
 
@@ -31,50 +32,6 @@ export interface UseCommandMenuReturn {
 }
 
 const UNGROUPED_KEY = '__ungrouped__'
-
-/** Map display characters to KeyboardEvent modifier properties */
-const MODIFIER_MAP: Record<string, 'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey'> = {
-  '⌘': 'metaKey',
-  '⌃': 'ctrlKey',
-  '⌥': 'altKey',
-  '⇧': 'shiftKey',
-}
-
-/** Regex to match leading modifier symbols followed by a key character */
-const MODIFIER_PATTERN = /^([⌘⌃⌥⇧]+)(.+)$/
-
-/** Parse a shortcut string like "⌘S" or "⌘⇧F" into a key+modifiers descriptor */
-function parseShortcut(shortcut: string): {
-  key: string
-  metaKey?: boolean
-  ctrlKey?: boolean
-  altKey?: boolean
-  shiftKey?: boolean
-} | null {
-  if (!shortcut) return null
-  const match = MODIFIER_PATTERN.exec(shortcut)
-  if (!match) return { key: shortcut.toLowerCase() }
-
-  const [, modSymbols, key] = match
-  const mods: Partial<Record<'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey', boolean>> = {}
-  for (const ch of modSymbols) {
-    const prop = MODIFIER_MAP[ch]
-    if (prop) mods[prop] = true
-  }
-  return { ...mods, key: key.toLowerCase() }
-}
-
-/** Check if a KeyboardEvent matches a parsed shortcut descriptor */
-function eventMatchesShortcut(e: KeyboardEvent, desc: ReturnType<typeof parseShortcut>): boolean {
-  if (!desc) return false
-  return (
-    e.key.toLowerCase() === desc.key &&
-    !!e.metaKey === !!desc.metaKey &&
-    !!e.ctrlKey === !!desc.ctrlKey &&
-    !!e.altKey === !!desc.altKey &&
-    !!e.shiftKey === !!desc.shiftKey
-  )
-}
 
 export function useCommandMenu(
   optionsOrFilter?: UseCommandMenuOptions | FilterFn,
@@ -109,6 +66,7 @@ export function useCommandMenu(
     if (!query.trim()) return allItems
     const q = query.toLowerCase()
     return allItems.filter((item) => {
+      if (item.forceMount) return true
       if (item.value.toLowerCase().includes(q)) return true
       if (item.label?.toLowerCase().includes(q)) return true
       if (item.keywords?.some((k) => k.toLowerCase().includes(q))) return true
@@ -174,6 +132,7 @@ export function useCommandMenu(
     if (item && !item.disabled) {
       selectedValue.value = item.value
       item.onSelect?.(item)
+      onItemSelect?.(item)
       close()
     }
   }
@@ -195,9 +154,8 @@ export function useCommandMenu(
     }
   }
 
-  // Rebuild shortcut map whenever items change (deep: true also catches
-  // in-place mutations like push/splice), and register global listener
-  // if items have shortcuts
+  // Rebuild shortcut map whenever items array is replaced, and register
+  // global listener if items have shortcuts
   let cleanupShortcuts: (() => void) | null = null
 
   watch(
@@ -213,7 +171,7 @@ export function useCommandMenu(
         cleanupShortcuts = () => window.removeEventListener('keydown', onShortcutKeydown)
       }
     },
-    { immediate: true, deep: true, flush: 'post' },
+    { immediate: true },
   )
 
   onUnmounted(() => {

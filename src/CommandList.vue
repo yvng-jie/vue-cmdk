@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { inject } from 'vue'
 import { CMDK_STATE, CMDK_LOADING } from './injectionKeys'
 import { injectStrict } from './utils/injectStrict'
 import CommandEmpty from './CommandEmpty.vue'
@@ -8,8 +7,12 @@ import CommandGroup from './CommandGroup.vue'
 import CommandItem from './CommandItem.vue'
 import CommandSeparator from './CommandSeparator.vue'
 
+defineProps<{
+  alwaysRenderSeparator?: boolean
+}>()
+
 const state = injectStrict(CMDK_STATE, 'CommandList')
-const getLoading = inject(CMDK_LOADING, () => false)
+const getLoading = injectStrict(CMDK_LOADING, 'CommandList')
 </script>
 
 <template>
@@ -41,7 +44,9 @@ const getLoading = inject(CMDK_LOADING, () => false)
           :on-select="item.onSelect"
         />
       </CommandGroup>
-      <CommandSeparator v-if="idx !== state.groupedItems.value.length - 1" />
+      <CommandSeparator
+        v-if="alwaysRenderSeparator || idx !== state.groupedItems.value.length - 1"
+      />
     </template>
   </div>
 </template>

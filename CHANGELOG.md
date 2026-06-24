@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.2.0 (2026-06-24)
+
+### ✨ Features
+
+- **forceMount prop** — `CommandItem` and `CommandGroup` support `forceMount`; marked items bypass search filtering (cmdk parity)
+- **Search highlight** — Matching text in search results is wrapped in `<mark>` for visual feedback
+- **`alwaysRender` on Separator** — `CommandSeparator` accepts `alwaysRender` prop; `CommandList` accepts `alwaysRenderSeparator` to keep separators visible regardless of group count
+- **Dialog `container` prop** — `CommandDialog` accepts a `container` prop to customize the Teleport target (defaults to `'body'`)
+- **Export shortcut utils** — `parseShortcut` and `eventMatchesShortcut` exported from `vue-command-kit`
+
+### 🐛 Bug Fixes
+
+- **selectCurrent** — Now invokes the `onItemSelect` callback so `v-model:value` updates correctly (fixes C1)
+- **CMDK_SELECT_HANDLER** — Emits `update:value` when an item is selected via keyboard (fixes C2)
+- **handleSelect** — Emits `update:value` when an item is selected via slot scope (fixes C3)
+- **CommandItem** — Removed duplicate `state.close()` on click (already handled by the select handler) (fixes C4)
+- **CommandMenu** — Default `visible` changed to `false`; `aria-expanded` now dynamically reflects state; added `aria-label`
+- **CommandList** — `CMDK_LOADING` injection unified to `injectStrict`
+
+### ⚡ Performance
+
+- **Shortcut watcher** — Removed `deep: true` from the items watch; listener rebuilds only when the items array is replaced
+
+### 📖 Documentation
+
+- **README** — Rewritten: shorter (~200 lines), more formal tone, reduced examples from 5 to 2
+- **CONTRIBUTING.md** — Now contains the full contributing guide (prerequisites, scripts, project structure, PR process)
+- **CHANGELOG** — Added 0.2.0 entries
+
+### 🧪 Testing
+
+- **highlight.test.ts** — New suite: 9 tests for `highlightText` utility
+- **parseShortcut.test.ts** — Refactored to import from `utils/shortcut.ts` instead of duplicating logic
+- **useCommandRoot.test.ts** — Added `update:value` emission test
+- **useCommandMenu.test.ts** — Added `selectCurrent` callback test and `forceMount` filter tests
+- **CommandItem.test.ts** — Added search highlight rendering test
+- Total: **117 tests** across **9 test suites**
+
+---
+
 ## 0.1.2 (2026-06-14)
 
 ### 🐛 Bug Fixes
