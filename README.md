@@ -109,7 +109,7 @@ function onSelect(item: CommandItemData) {
 | `closeOnSelect` | `boolean`               | `true`                          | Close dialog after selection                   |
 | `shouldFilter`  | `boolean`               | `true`                          | When `false`, skip built-in filtering          |
 | `loop`          | `boolean`               | `true`                          | When `false`, keyboard nav stops at boundaries |
-| `label`         | `string`                | `'Command menu'`                | `aria-label` for the dialog                    |
+| `label`         | `string`                | `'Command menu'`                | Accessible name for the dialog and combobox    |
 | `container`     | `string \| HTMLElement` | `'body'`                        | Teleport target for the dialog                 |
 
 ### `<Command.Dialog>` Events
@@ -120,6 +120,22 @@ function onSelect(item: CommandItemData) {
 | `update:searchQuery` | `string`          | Emitted when search query changes |
 | `update:value`       | `string`          | Emitted when an item is selected  |
 | `select`             | `CommandItemData` | Emitted when an item is selected  |
+
+## 🧪 E2E tests
+
+The demo app is covered with Playwright end-to-end tests for the main command palette flows:
+
+- open and close behavior
+- keyboard navigation and selection
+- search filtering, empty states, loading states, and disabled items
+- theme switching through both buttons and command selection
+- accessibility contracts such as `aria-activedescendant`, `aria-selected`, focus trap, and automated dialog scanning
+
+Run them locally with:
+
+```bash
+pnpm test:e2e
+```
 
 ### `CommandItemData`
 

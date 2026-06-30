@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { toRef, watch } from 'vue'
 import type { CommandRootProps, CommandRootEmits } from './types'
 import { useCommandRoot } from './useCommandRoot'
 
@@ -17,7 +17,7 @@ const emit = defineEmits<CommandRootEmits>()
 const { state, handleSelect } = useCommandRoot(
   {
     filter: props.filter,
-    loading: props.loading,
+    loading: toRef(props, 'loading'),
     closeOnSelect: props.closeOnSelect,
     shouldFilter: props.shouldFilter,
     loop: props.loop,
@@ -43,7 +43,6 @@ watch(
 )
 watch(state.searchQuery, (v) => emit('update:searchQuery', v))
 
-// Expose public API
 defineExpose({
   open: state.open,
   close: state.close,
@@ -55,13 +54,7 @@ defineExpose({
 </script>
 
 <template>
-  <div
-    data-cmdk-root=""
-    role="combobox"
-    :aria-expanded="state.visible.value"
-    :aria-label="label ?? 'Command menu'"
-    aria-haspopup="listbox"
-  >
+  <div data-cmdk-root="">
     <slot
       :items="state.items"
       :filtered-items="state.filteredItems"

@@ -1,4 +1,4 @@
-import { computed, provide, watch } from 'vue'
+import { computed, provide, unref, watch, type Ref } from 'vue'
 import type { CommandItemData, CommandRootEmits } from './types'
 import { useCommandMenu, type FilterFn, type UseCommandMenuOptions } from './useCommandMenu'
 import {
@@ -7,15 +7,25 @@ import {
   CMDK_CLOSE_ON_SELECT,
   CMDK_SELECT_HANDLER,
   CMDK_ITEM_INDEX_MAP,
+  CMDK_A11Y_IDS,
 } from './injectionKeys'
 
 export interface UseCommandRootOptions {
   filter?: FilterFn
-  loading?: boolean
+  loading?: boolean | Ref<boolean>
   closeOnSelect?: boolean
   shouldFilter?: boolean
   loop?: boolean
   value?: string
+}
+
+let cmdkInstanceCount = 0
+
+function createOptionId(baseId: string, value: string): string {
+  return `${baseId}-option-${value
+    .replace(/[^a-zA-Z0-9_-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase() || 'item'}`
 }
 
 export interface UseCommandRootReturn {
@@ -42,6 +52,7 @@ export function useCommandRoot(
     shouldFilter = true,
     loop = true,
   } = options
+  const getLoading = () => unref(loading)
 
   const menuOptions: UseCommandMenuOptions = { filter, shouldFilter, loop }
 
@@ -52,7 +63,6 @@ export function useCommandRoot(
     if (closeOnSelect) state.close()
   })
 
-  // Sync controlled value prop → internal selectedValue
   watch(
     () => options.value,
     (v) => {
@@ -62,7 +72,7 @@ export function useCommandRoot(
   )
 
   provide(CMDK_STATE, state)
-  provide(CMDK_LOADING, () => loading)
+  provide(CMDK_LOADING, getLoading)
   provide(CMDK_CLOSE_ON_SELECT, () => closeOnSelect)
   provide(CMDK_SELECT_HANDLER, (item: CommandItemData) => {
     emit('select', item)
@@ -71,7 +81,14 @@ export function useCommandRoot(
     if (closeOnSelect) state.close()
   })
 
-  /** O(1) value→index lookup for hover targetting */
+  const baseId = `cmdk-${++cmdkInstanceCount}`
+  provide(CMDK_A11Y_IDS, {
+    inputId: `${baseId}-input`,
+    listboxId: `${baseId}-listbox`,
+    optionId: (value: string) => createOptionId(baseId, value),
+  })
+
+  /** O(1) value to index lookup for hover targetting. */
   const valueIndexMap = computed(() => {
     const map = new Map<string, number>()
     state.filteredItems.value.forEach((item, idx) => map.set(item.value, idx))

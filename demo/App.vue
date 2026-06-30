@@ -68,11 +68,14 @@ const demoItems: CommandItemData[] = [
     group: 'Actions',
     keywords: ['dark', 'light'],
   },
+  { value: 'billing', label: 'Billing (coming soon)', group: 'Actions', disabled: true, keywords: ['payment'] },
   { value: 'notifications', label: 'Notifications', group: 'System' },
   { value: 'language', label: 'Change language', group: 'System' },
   { value: 'keyboard', label: 'Keyboard shortcuts', group: 'System', keywords: ['hotkeys'] },
   { value: 'logout', label: 'Sign out', group: 'Actions' },
 ]
+
+const isLoading = ref(false)
 
 function onSelect(item: CommandItemData) {
   if (item.value === 'theme') {
@@ -293,6 +296,12 @@ const statusLabels: Record<string, string> = {
             <strong>"⌘D"</strong>
             !
           </p>
+          <button
+            class="btn btn-outline"
+            @click="isLoading = !isLoading"
+          >
+            {{ isLoading ? 'Disable loading state' : 'Enable loading state' }}
+          </button>
         </div>
       </div>
     </section>
@@ -625,9 +634,11 @@ function onSelect(item: CommandItemData) {
     <Command.Dialog
       :visible="visible"
       :items="demoItems"
-      placeholder="Type a command or search..."
+      :loading="isLoading"
       @update:visible="visible = $event"
       @select="onSelect"
+      label="Command menu"
+      placeholder="Type a command or search..."
     />
   </div>
 </template>
