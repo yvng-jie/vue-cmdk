@@ -28,8 +28,6 @@ export interface CommandRootProps {
   visible?: boolean
   /** Search query (v-model) */
   searchQuery?: string
-  /** Accessible label for the combobox input */
-  label?: string
   /** Placeholder for search input */
   placeholder?: string
   /** Custom filter function. Return items to display, or null to use default filter */

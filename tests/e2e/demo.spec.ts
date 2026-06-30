@@ -58,7 +58,9 @@ test('shows the empty state when no items match', async ({ page }) => {
   await expect(page.locator('[data-cmdk-item]')).toHaveCount(0)
 })
 
-test('updates aria-activedescendant and aria-selected during keyboard navigation', async ({ page }) => {
+test('updates aria-activedescendant and aria-selected during keyboard navigation', async ({
+  page,
+}) => {
   await openPalette(page)
   const combobox = page.getByRole('combobox', { name: 'Command menu' })
   const searchItem = page.locator('[data-cmdk-item][data-value="search"]')
@@ -66,7 +68,10 @@ test('updates aria-activedescendant and aria-selected during keyboard navigation
   const homeId = await homeItem.getAttribute('id')
 
   await expect(searchItem).toHaveAttribute('aria-selected', 'true')
-  await expect(combobox).toHaveAttribute('aria-activedescendant', await searchItem.getAttribute('id'))
+  await expect(combobox).toHaveAttribute(
+    'aria-activedescendant',
+    await searchItem.getAttribute('id'),
+  )
   await combobox.press('ArrowDown')
   await expect(homeItem).toHaveAttribute('aria-selected', 'true')
   await expect(combobox).toHaveAttribute('aria-activedescendant', homeId)
@@ -82,7 +87,10 @@ test('supports ArrowUp navigation back to the previous option', async ({ page })
   await expect(homeItem).toHaveAttribute('aria-selected', 'true')
   await combobox.press('ArrowUp')
   await expect(searchItem).toHaveAttribute('aria-selected', 'true')
-  await expect(combobox).toHaveAttribute('aria-activedescendant', await searchItem.getAttribute('id'))
+  await expect(combobox).toHaveAttribute(
+    'aria-activedescendant',
+    await searchItem.getAttribute('id'),
+  )
 })
 
 test('exposes a stable accessibility tree for the dialog', async ({ page }) => {
@@ -92,18 +100,18 @@ test('exposes a stable accessibility tree for the dialog', async ({ page }) => {
     - text: 10 items
     - listbox:
       - group:
-        - text: Navigation
-        - group:
-          - option "Search files ⌘S" [selected]
-          - option "Go to home ⌘H"
-          - option "Bookmarks ⌘B"
-      - group:
         - text: Actions
         - group:
           - option "Open settings ⌘,"
           - option "Toggle theme ⌘D"
           - option "Billing (coming soon)" [disabled]
           - option "Sign out"
+      - group:
+        - text: Navigation
+        - group:
+          - option "Search files ⌘S" [selected]
+          - option "Go to home ⌘H"
+          - option "Bookmarks ⌘B"
       - group:
         - text: System
         - group:
@@ -163,6 +171,10 @@ test('does not select disabled items', async ({ page }) => {
 
 test('has no critical accessibility violations in the dialog flow', async ({ page }) => {
   await openPalette(page)
-  const accessibilityScanResults = await new AxeBuilder({ page }).include('[data-cmdk-dialog-wrapper]').analyze()
-  expect(accessibilityScanResults.violations.filter((violation) => violation.impact === 'critical')).toEqual([])
+  const accessibilityScanResults = await new AxeBuilder({ page })
+    .include('[data-cmdk-dialog-wrapper]')
+    .analyze()
+  expect(
+    accessibilityScanResults.violations.filter((violation) => violation.impact === 'critical'),
+  ).toEqual([])
 })
