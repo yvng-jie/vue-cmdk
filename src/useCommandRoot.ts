@@ -22,10 +22,12 @@ export interface UseCommandRootOptions {
 let cmdkInstanceCount = 0
 
 function createOptionId(baseId: string, value: string): string {
-  return `${baseId}-option-${value
-    .replace(/[^a-zA-Z0-9_-]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .toLowerCase() || 'item'}`
+  return `${baseId}-option-${
+    value
+      .replace(/[^a-zA-Z0-9_-]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .toLowerCase() || 'item'
+  }`
 }
 
 export interface UseCommandRootReturn {

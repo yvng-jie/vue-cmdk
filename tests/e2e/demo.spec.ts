@@ -63,16 +63,15 @@ test('updates aria-activedescendant and aria-selected during keyboard navigation
 }) => {
   await openPalette(page)
   const combobox = page.getByRole('combobox', { name: 'Command menu' })
-  const searchItem = page.locator('[data-cmdk-item][data-value="search"]')
   const homeItem = page.locator('[data-cmdk-item][data-value="home"]')
+  const initialId = await combobox.getAttribute('aria-activedescendant')
+  const initialSelectedItem = page.locator(`#${initialId}`)
   const homeId = await homeItem.getAttribute('id')
 
-  await expect(searchItem).toHaveAttribute('aria-selected', 'true')
-  await expect(combobox).toHaveAttribute(
-    'aria-activedescendant',
-    await searchItem.getAttribute('id'),
-  )
+  await expect(initialSelectedItem).toHaveAttribute('aria-selected', 'true')
+  await expect(combobox).toHaveAttribute('aria-activedescendant', initialId)
   await combobox.press('ArrowDown')
+  await expect(initialSelectedItem).toHaveAttribute('aria-selected', 'false')
   await expect(homeItem).toHaveAttribute('aria-selected', 'true')
   await expect(combobox).toHaveAttribute('aria-activedescendant', homeId)
 })

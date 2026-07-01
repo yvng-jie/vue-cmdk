@@ -5,9 +5,5 @@ defineProps<{
 </script>
 
 <template>
-  <div
-    data-cmdk-separator=""
-    aria-hidden="true"
-    role="presentation"
-  />
+  <div data-cmdk-separator="" aria-hidden="true" role="presentation" />
 </template>

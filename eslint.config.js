@@ -26,7 +26,15 @@ export default tseslint.config(
   },
   prettier,
   {
-    ignores: ['dist/', 'dist-demo/', 'node_modules/', '*.js', 'scripts/'],
+    ignores: [
+      'dist/',
+      'dist-demo/',
+      'node_modules/',
+      'playwright-report/',
+      'test-results/',
+      '*.js',
+      'scripts/',
+    ],
   },
   {
     rules: {

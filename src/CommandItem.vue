@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { inject, computed, isVNode, type Component, type VNode } from 'vue'
 import type { CommandItemData } from './types'
-import { CMDK_A11Y_IDS, CMDK_STATE, CMDK_SELECT_HANDLER, CMDK_ITEM_INDEX_MAP } from './injectionKeys'
+import {
+  CMDK_A11Y_IDS,
+  CMDK_STATE,
+  CMDK_SELECT_HANDLER,
+  CMDK_ITEM_INDEX_MAP,
+} from './injectionKeys'
 import { injectStrict } from './utils/injectStrict'
 import { highlightText } from './utils/highlight'
 
@@ -88,32 +93,20 @@ function handleClick() {
       }
     "
   >
-    <slot
-      :item="itemData"
-      :active="isActive"
-    >
-      <span
-        v-if="iconComponent"
-        data-cmdk-item-icon=""
-      >
+    <slot :item="itemData" :active="isActive">
+      <span v-if="iconComponent" data-cmdk-item-icon="">
         <component :is="iconComponent" />
       </span>
       <span data-cmdk-item-label>
         <template v-if="highlightedLabel">
-          <template
-            v-for="(segment, idx) in highlightedLabel"
-            :key="idx"
-          >
+          <template v-for="(segment, idx) in highlightedLabel" :key="idx">
             <mark v-if="segment.highlighted">{{ segment.text }}</mark>
             <span v-else>{{ segment.text }}</span>
           </template>
         </template>
         <template v-else>{{ displayLabel }}</template>
       </span>
-      <span
-        v-if="shortcut"
-        data-cmdk-item-shortcut
-      >
+      <span v-if="shortcut" data-cmdk-item-shortcut>
         {{ shortcut }}
       </span>
     </slot>

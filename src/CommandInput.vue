@@ -55,9 +55,9 @@ function onKeydown(e: KeyboardEvent) {
 
 <template>
   <input
+    :id="a11y.inputId"
     ref="inputRef"
     data-cmdk-input=""
-    :id="a11y.inputId"
     :value="state.searchQuery.value"
     :aria-activedescendant="activeDescendant"
     :aria-controls="a11y.listboxId"

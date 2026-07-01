@@ -108,11 +108,7 @@ function onKeydown(e: KeyboardEvent) {
         :aria-label="props.label"
         @keydown="onKeydown"
       >
-        <div
-          data-cmdk-dialog-mask=""
-          aria-hidden="true"
-          @click="closeOnMask"
-        />
+        <div data-cmdk-dialog-mask="" aria-hidden="true" @click="closeOnMask" />
         <div data-cmdk-dialog-wrapper="">
           <div data-cmdk-dialog-header="">
             <slot name="header">
@@ -129,10 +125,7 @@ function onKeydown(e: KeyboardEvent) {
               <CommandList />
             </slot>
           </div>
-          <div
-            v-if="$slots.footer"
-            data-cmdk-dialog-footer=""
-          >
+          <div v-if="$slots.footer" data-cmdk-dialog-footer="">
             <slot name="footer" />
           </div>
         </div>

@@ -68,7 +68,13 @@ const demoItems: CommandItemData[] = [
     group: 'Actions',
     keywords: ['dark', 'light'],
   },
-  { value: 'billing', label: 'Billing (coming soon)', group: 'Actions', disabled: true, keywords: ['payment'] },
+  {
+    value: 'billing',
+    label: 'Billing (coming soon)',
+    group: 'Actions',
+    disabled: true,
+    keywords: ['payment'],
+  },
   { value: 'notifications', label: 'Notifications', group: 'System' },
   { value: 'language', label: 'Change language', group: 'System' },
   { value: 'keyboard', label: 'Keyboard shortcuts', group: 'System', keywords: ['hotkeys'] },
@@ -296,10 +302,7 @@ const statusLabels: Record<string, string> = {
             <strong>"⌘D"</strong>
             !
           </p>
-          <button
-            class="btn btn-outline"
-            @click="isLoading = !isLoading"
-          >
+          <button class="btn btn-outline" @click="isLoading = !isLoading">
             {{ isLoading ? 'Disable loading state' : 'Enable loading state' }}
           </button>
         </div>
@@ -635,10 +638,10 @@ function onSelect(item: CommandItemData) {
       :visible="visible"
       :items="demoItems"
       :loading="isLoading"
-      @update:visible="visible = $event"
-      @select="onSelect"
       label="Command menu"
       placeholder="Type a command or search..."
+      @update:visible="visible = $event"
+      @select="onSelect"
     />
   </div>
 </template>

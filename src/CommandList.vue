@@ -22,12 +22,7 @@ const grouped = computed(() => state.groupedItems.value as CommandGroupData[])
 
 <template>
   <div data-cmdk-list-root="">
-    <div
-      data-cmdk-list-announcement=""
-      aria-live="polite"
-      aria-atomic="true"
-      class="sr-only"
-    >
+    <div data-cmdk-list-announcement="" aria-live="polite" aria-atomic="true" class="sr-only">
       <template v-if="state.searchQuery.value && state.filteredItems.value.length === 0">
         No results found
       </template>
@@ -37,15 +32,12 @@ const grouped = computed(() => state.groupedItems.value as CommandGroupData[])
     <CommandEmpty />
     <CommandLoading :loading="getLoading()" />
     <div
-      data-cmdk-list=""
       :id="a11y.listboxId"
+      data-cmdk-list=""
       :aria-busy="getLoading() ? 'true' : 'false'"
       role="listbox"
     >
-      <template
-        v-for="(group, idx) in grouped"
-        :key="group.heading || '__ungrouped__'"
-      >
+      <template v-for="(group, idx) in grouped" :key="group.heading || '__ungrouped__'">
         <CommandGroup :heading="group.heading">
           <CommandItem
             v-for="item in group.items"
