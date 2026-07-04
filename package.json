@@ -1,6 +1,6 @@
 {
   "name": "vue-command-kit",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "⌘K — Fast, composable, unstyled command menu for Vue 3",
   "type": "module",
   "packageManager": "pnpm@11.1.2",

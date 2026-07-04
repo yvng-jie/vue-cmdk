@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.2.1 (2026-07-04)
+
+### ♿ Accessibility
+
+- **Combobox pattern** — `CommandInput` role changed from `searchbox` to `combobox`; added `aria-controls`, `aria-expanded`, `aria-haspopup`, `aria-autocomplete` (WAI-ARIA APG compliant)
+- **Stable IDs** — All listbox options now expose deterministic IDs via `CMDK_A11Y_IDS` injection; `aria-activedescendant` linkage verified in E2E
+- **Listbox structure** — `aria-live` announcement moved outside listbox; `aria-busy` set during loading
+- **CommandSeparator** — Changed from `role="separator"` to `role="presentation"` with `aria-hidden="true"` (visual dividers excluded from accessibility tree)
+- **Axe-core scan** — Added automated accessibility scanning; zero critical violations
+
+### 🧪 Testing
+
+- **E2E tests** — Added 17 Playwright browser-level tests: dialog open/close, keyboard navigation, search filtering, empty/loading/disabled states, focus trap, accessibility tree snapshot
+- **CI** — Added `e2e` job that installs Chromium and runs Playwright suite
+
+### 🔧 Internal
+
+- **`loading` prop** — Now accepts `boolean | Ref<boolean>` via `toRef`/`unref` for better composable integration
+- **Demo** — Added disabled item ("Billing") and loading state toggle for E2E test coverage
+
 ## 0.2.0 (2026-06-24)
 
 ### ✨ Features
