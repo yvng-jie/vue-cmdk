@@ -123,9 +123,10 @@ test('the dialog has a correct accessibility structure', async ({ page }) => {
   await expect(listbox.getByRole('option')).toHaveCount(10)
 
   // Disabled item
-  await expect(
-    listbox.locator('[data-cmdk-item][data-value="billing"]'),
-  ).toHaveAttribute('aria-disabled', 'true')
+  await expect(listbox.locator('[data-cmdk-item][data-value="billing"]')).toHaveAttribute(
+    'aria-disabled',
+    'true',
+  )
 
   // Exactly one item is selected at any time
   await expect(listbox.locator('[aria-selected="true"]')).toHaveCount(1)
