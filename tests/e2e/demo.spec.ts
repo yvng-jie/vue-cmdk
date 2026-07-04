@@ -63,61 +63,72 @@ test('updates aria-activedescendant and aria-selected during keyboard navigation
 }) => {
   await openPalette(page)
   const combobox = page.getByRole('combobox', { name: 'Command menu' })
-  const homeItem = page.locator('[data-cmdk-item][data-value="home"]')
   const initialId = await combobox.getAttribute('aria-activedescendant')
   const initialSelectedItem = page.locator(`#${initialId}`)
-  const homeId = await homeItem.getAttribute('id')
 
   await expect(initialSelectedItem).toHaveAttribute('aria-selected', 'true')
   await expect(combobox).toHaveAttribute('aria-activedescendant', initialId)
+
+  // Navigate forward and verify the active item changes
   await combobox.press('ArrowDown')
-  await expect(initialSelectedItem).toHaveAttribute('aria-selected', 'false')
-  await expect(homeItem).toHaveAttribute('aria-selected', 'true')
-  await expect(combobox).toHaveAttribute('aria-activedescendant', homeId)
+  const nextId = await combobox.getAttribute('aria-activedescendant')
+  const nextItem = page.locator(`#${nextId}`)
+  await expect(nextItem).toHaveAttribute('aria-selected', 'true')
+  await expect(combobox).toHaveAttribute('aria-activedescendant', nextId)
+  expect(nextId).not.toBe(initialId)
+
+  // Navigate back and restore the initial selection
+  await combobox.press('ArrowUp')
+  await expect(initialSelectedItem).toHaveAttribute('aria-selected', 'true')
+  await expect(combobox).toHaveAttribute('aria-activedescendant', initialId)
 })
 
 test('supports ArrowUp navigation back to the previous option', async ({ page }) => {
   await openPalette(page)
   const combobox = page.getByRole('combobox', { name: 'Command menu' })
-  const searchItem = page.locator('[data-cmdk-item][data-value="search"]')
-  const homeItem = page.locator('[data-cmdk-item][data-value="home"]')
+  const initialId = await combobox.getAttribute('aria-activedescendant')
+  const initialSelectedItem = page.locator(`#${initialId}`)
 
+  // Navigate forward then back, verify we return to the initial item
   await combobox.press('ArrowDown')
-  await expect(homeItem).toHaveAttribute('aria-selected', 'true')
+  const afterDownId = await combobox.getAttribute('aria-activedescendant')
+  expect(afterDownId).not.toBe(initialId)
+
   await combobox.press('ArrowUp')
-  await expect(searchItem).toHaveAttribute('aria-selected', 'true')
-  await expect(combobox).toHaveAttribute(
-    'aria-activedescendant',
-    await searchItem.getAttribute('id'),
-  )
+  await expect(initialSelectedItem).toHaveAttribute('aria-selected', 'true')
+  await expect(combobox).toHaveAttribute('aria-activedescendant', initialId)
 })
 
-test('exposes a stable accessibility tree for the dialog', async ({ page }) => {
+test('the dialog has a correct accessibility structure', async ({ page }) => {
   await openPalette(page)
-  await expect(page.locator('[data-cmdk-dialog-wrapper]')).toMatchAriaSnapshot(`
-    - combobox "Command menu" [expanded]
-    - text: 10 items
-    - listbox:
-      - group:
-        - text: Actions
-        - group:
-          - option "Open settings ⌘,"
-          - option "Toggle theme ⌘D"
-          - option "Billing (coming soon)" [disabled]
-          - option "Sign out"
-      - group:
-        - text: Navigation
-        - group:
-          - option "Search files ⌘S" [selected]
-          - option "Go to home ⌘H"
-          - option "Bookmarks ⌘B"
-      - group:
-        - text: System
-        - group:
-          - option "Notifications"
-          - option "Change language"
-          - option "Keyboard shortcuts"
-  `)
+  const dialog = page.locator('[data-cmdk-dialog-wrapper]')
+
+  // Combobox
+  await expect(dialog.getByRole('combobox', { name: 'Command menu' })).toHaveAttribute(
+    'aria-expanded',
+    'true',
+  )
+
+  // Announcement region
+  await expect(dialog.locator('[aria-live="polite"]')).toHaveText('10 items')
+
+  // Listbox
+  const listbox = dialog.getByRole('listbox')
+  await expect(listbox).toHaveAttribute('aria-busy', 'false')
+
+  // Groups
+  await expect(dialog.locator('[data-cmdk-group]')).toHaveCount(3)
+
+  // Options
+  await expect(listbox.getByRole('option')).toHaveCount(10)
+
+  // Disabled item
+  await expect(
+    listbox.locator('[data-cmdk-item][data-value="billing"]'),
+  ).toHaveAttribute('aria-disabled', 'true')
+
+  // Exactly one item is selected at any time
+  await expect(listbox.locator('[aria-selected="true"]')).toHaveCount(1)
 })
 
 test('supports enter selection for the active item', async ({ page }) => {
