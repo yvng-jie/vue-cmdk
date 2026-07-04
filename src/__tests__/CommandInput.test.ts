@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { ref, computed } from 'vue'
 import CommandInput from '../CommandInput.vue'
-import { CMDK_STATE, CMDK_SELECT_HANDLER } from '../injectionKeys'
+import { CMDK_STATE, CMDK_SELECT_HANDLER, CMDK_A11Y_IDS } from '../injectionKeys'
 import type { UseCommandMenuReturn } from '../useCommandMenu'
 import type { CommandItemData } from '../types'
 
@@ -63,6 +63,11 @@ function mountInput(state?: UseCommandMenuReturn) {
       provide: {
         [CMDK_STATE as symbol]: s,
         [CMDK_SELECT_HANDLER as symbol]: () => {},
+        [CMDK_A11Y_IDS as symbol]: {
+          inputId: 'cmdk-test-input',
+          listboxId: 'cmdk-test-listbox',
+          optionId: (value: string) => `cmdk-test-option-${value}`,
+        },
       },
     },
   })
@@ -76,9 +81,9 @@ describe('CommandInput', () => {
     expect(input.attributes('placeholder')).toBe('Search...')
   })
 
-  it('has searchbox role', () => {
+  it('has combobox role', () => {
     const wrapper = mountInput()
-    expect(wrapper.find('[data-cmdk-input]').attributes('role')).toBe('searchbox')
+    expect(wrapper.find('[data-cmdk-input]').attributes('role')).toBe('combobox')
   })
 
   it('has autocomplete and spellcheck disabled', () => {
@@ -133,6 +138,11 @@ describe('CommandInput', () => {
         provide: {
           [CMDK_STATE as symbol]: state,
           [CMDK_SELECT_HANDLER as symbol]: onItemSelect,
+          [CMDK_A11Y_IDS as symbol]: {
+            inputId: 'cmdk-test-input',
+            listboxId: 'cmdk-test-listbox',
+            optionId: (value: string) => `cmdk-test-option-${value}`,
+          },
         },
       },
     })
@@ -144,7 +154,7 @@ describe('CommandInput', () => {
     const state = createMockState()
     const wrapper = mountInput(state)
     const input = wrapper.find('[data-cmdk-input]')
-    expect(input.attributes('aria-activedescendant')).toBe('cmdk-item-home')
+    expect(input.attributes('aria-activedescendant')).toBe('cmdk-test-option-home')
   })
 
   it('updates aria-activedescendant when activeIndex changes', async () => {
@@ -153,7 +163,7 @@ describe('CommandInput', () => {
     state.activeIndex.value = 1
     await wrapper.vm.$nextTick()
     const input = wrapper.find('[data-cmdk-input]')
-    expect(input.attributes('aria-activedescendant')).toBe('cmdk-item-settings')
+    expect(input.attributes('aria-activedescendant')).toBe('cmdk-test-option-settings')
   })
 
   it('exposes inputRef', () => {

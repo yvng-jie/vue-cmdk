@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import CommandItem from '../CommandItem.vue'
-import { CMDK_STATE, CMDK_SELECT_HANDLER, CMDK_ITEM_INDEX_MAP } from '../injectionKeys'
+import { CMDK_STATE, CMDK_SELECT_HANDLER, CMDK_ITEM_INDEX_MAP, CMDK_A11Y_IDS } from '../injectionKeys'
 import { ref, computed } from 'vue'
 import type { UseCommandMenuReturn } from '../useCommandMenu'
 import type { CommandItemData } from '../types'
@@ -59,6 +59,11 @@ function mountItem(props: any, state?: UseCommandMenuReturn) {
             ['home', 0],
             ['settings', 1],
           ]),
+        [CMDK_A11Y_IDS as symbol]: {
+          inputId: 'cmdk-test-input',
+          listboxId: 'cmdk-test-listbox',
+          optionId: (value: string) => `cmdk-test-option-${value}`,
+        },
       },
     },
   })
