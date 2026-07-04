@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { inject, computed, isVNode, type Component, type VNode } from 'vue'
 import type { CommandItemData } from './types'
-import { CMDK_STATE, CMDK_SELECT_HANDLER, CMDK_ITEM_INDEX_MAP } from './injectionKeys'
+import {
+  CMDK_A11Y_IDS,
+  CMDK_STATE,
+  CMDK_SELECT_HANDLER,
+  CMDK_ITEM_INDEX_MAP,
+} from './injectionKeys'
 import { injectStrict } from './utils/injectStrict'
 import { highlightText } from './utils/highlight'
 
@@ -28,9 +33,8 @@ const props = withDefaults(
 )
 
 const state = injectStrict(CMDK_STATE, 'CommandItem')
+const a11y = injectStrict(CMDK_A11Y_IDS, 'CommandItem')
 const getIndexMap = inject(CMDK_ITEM_INDEX_MAP, () => new Map())
-
-const itemId = computed(() => `cmdk-item-${props.value}`)
 
 const itemData = computed<CommandItemData>(() => ({
   value: props.value,
@@ -43,12 +47,6 @@ const itemData = computed<CommandItemData>(() => ({
   onSelect: props.onSelect,
 }))
 
-/**
- * Normalize icon prop for `<component :is>`:
- * - Component → pass through (works natively)
- * - () => VNode → pass through (treated as functional component)
- * - VNode → wrap in anonymous functional component
- */
 const iconComponent = computed(() => {
   if (!props.icon) return null
   if (isVNode(props.icon)) {
@@ -80,7 +78,7 @@ function handleClick() {
 
 <template>
   <div
-    :id="itemId"
+    :id="a11y.optionId(value)"
     data-cmdk-item=""
     role="option"
     :aria-selected="isActive"

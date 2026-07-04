@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { ref, computed } from 'vue'
 import CommandList from '../CommandList.vue'
-import { CMDK_STATE, CMDK_LOADING } from '../injectionKeys'
+import { CMDK_STATE, CMDK_LOADING, CMDK_A11Y_IDS } from '../injectionKeys'
 import type { UseCommandMenuReturn } from '../useCommandMenu'
 import type { CommandItemData } from '../types'
 
@@ -72,6 +72,11 @@ function mountList(state?: UseCommandMenuReturn, loading = false) {
       provide: {
         [CMDK_STATE as symbol]: s,
         [CMDK_LOADING as symbol]: () => loading,
+        [CMDK_A11Y_IDS as symbol]: {
+          inputId: 'cmdk-test-input',
+          listboxId: 'cmdk-test-listbox',
+          optionId: (value: string) => `cmdk-test-option-${value}`,
+        },
       },
     },
   })

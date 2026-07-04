@@ -1,37 +1,38 @@
 <script setup lang="ts">
-import { inject, ref, computed } from 'vue'
+import { computed, inject, ref } from 'vue'
 import type { CommandItemData } from './types'
-import { CMDK_STATE, CMDK_SELECT_HANDLER } from './injectionKeys'
+import { CMDK_A11Y_IDS, CMDK_STATE, CMDK_SELECT_HANDLER } from './injectionKeys'
 import { injectStrict } from './utils/injectStrict'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
+    label?: string
     placeholder?: string
     autoFocus?: boolean
   }>(),
   {
+    label: 'Command menu',
     placeholder: 'Type a command or search...',
     autoFocus: true,
   },
 )
 
 const state = injectStrict(CMDK_STATE, 'CommandInput')
+const a11y = injectStrict(CMDK_A11Y_IDS, 'CommandInput')
 const onItemSelect = inject(CMDK_SELECT_HANDLER, () => {})
 
 const inputRef = ref<HTMLInputElement | null>(null)
 defineExpose({ inputRef })
 
-const activeDescendantId = computed(() => {
-  const active = state.filteredItems.value[state.activeIndex.value]
-  return active ? `cmdk-item-${active.value}` : undefined
+const activeDescendant = computed(() => {
+  const activeItem = state.filteredItems.value[state.activeIndex.value]
+  if (!state.visible.value || !activeItem) return undefined
+  return a11y.optionId(activeItem.value)
 })
 
 function onInput(e: Event) {
-  const target = e.target as (EventTarget & HTMLInputElement) | null
-  if (target) {
-    state.searchQuery.value = target.value
-    state.activeIndex.value = 0
-  }
+  state.searchQuery.value = (e.target as HTMLInputElement).value
+  state.activeIndex.value = 0
 }
 
 function onKeydown(e: KeyboardEvent) {
@@ -54,12 +55,18 @@ function onKeydown(e: KeyboardEvent) {
 
 <template>
   <input
+    :id="a11y.inputId"
     ref="inputRef"
     data-cmdk-input=""
     :value="state.searchQuery.value"
+    :aria-activedescendant="activeDescendant"
+    :aria-controls="a11y.listboxId"
+    :aria-expanded="state.visible.value"
+    :aria-haspopup="'listbox'"
+    :aria-label="props.label"
+    aria-autocomplete="list"
     :placeholder="placeholder"
-    role="searchbox"
-    :aria-activedescendant="activeDescendantId"
+    role="combobox"
     autocomplete="off"
     autocorrect="off"
     spellcheck="false"

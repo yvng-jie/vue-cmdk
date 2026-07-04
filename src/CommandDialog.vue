@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue'
+import { ref, toRef, watch, nextTick } from 'vue'
 import type { CommandDialogProps, CommandRootEmits } from './types'
 import { useCommandRoot } from './useCommandRoot'
 import CommandInput from './CommandInput.vue'
@@ -7,6 +7,7 @@ import CommandList from './CommandList.vue'
 
 const props = withDefaults(defineProps<CommandDialogProps>(), {
   visible: false,
+  label: 'Command menu',
   placeholder: 'Type a command or search...',
   autoFocus: true,
   closeOnSelect: true,
@@ -21,7 +22,7 @@ const emit = defineEmits<CommandRootEmits>()
 const { state } = useCommandRoot(
   {
     filter: props.filter,
-    loading: props.loading,
+    loading: toRef(props, 'loading'),
     closeOnSelect: props.closeOnSelect,
     shouldFilter: props.shouldFilter,
     loop: props.loop,
@@ -32,7 +33,6 @@ const { state } = useCommandRoot(
 
 const commandInputRef = ref<InstanceType<typeof CommandInput> | null>(null)
 
-// Sync items prop with internal state
 watch(
   () => props.items,
   (v) => {
@@ -41,7 +41,6 @@ watch(
   { immediate: true },
 )
 
-// Sync visible prop with internal state
 watch(
   () => props.visible,
   (v) => {
@@ -50,7 +49,6 @@ watch(
   { immediate: true },
 )
 
-// Also sync searchQuery prop with internal state (for v-model:searchQuery)
 watch(
   () => props.searchQuery,
   (v) => {
@@ -78,7 +76,6 @@ function onKeydown(e: KeyboardEvent) {
     e.preventDefault()
     state.close()
   }
-  // Focus trap: keep Tab/Shift+Tab inside the dialog
   if (e.key === 'Tab') {
     const wrapper = e.currentTarget as EventTarget & HTMLElement
     const focusable = wrapper.querySelectorAll<HTMLElement>(
@@ -92,11 +89,9 @@ function onKeydown(e: KeyboardEvent) {
         e.preventDefault()
         last.focus()
       }
-    } else {
-      if (document.activeElement === last) {
-        e.preventDefault()
-        first.focus()
-      }
+    } else if (document.activeElement === last) {
+      e.preventDefault()
+      first.focus()
     }
   }
 }
@@ -110,7 +105,7 @@ function onKeydown(e: KeyboardEvent) {
         data-cmdk-dialog=""
         role="dialog"
         aria-modal="true"
-        :aria-label="props.label ?? 'Command menu'"
+        :aria-label="props.label"
         @keydown="onKeydown"
       >
         <div data-cmdk-dialog-mask="" aria-hidden="true" @click="closeOnMask" />
@@ -119,6 +114,7 @@ function onKeydown(e: KeyboardEvent) {
             <slot name="header">
               <CommandInput
                 ref="commandInputRef"
+                :label="props.label"
                 :placeholder="placeholder"
                 :auto-focus="autoFocus"
               />

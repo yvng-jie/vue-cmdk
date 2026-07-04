@@ -32,6 +32,8 @@
     "build": "vite build && node scripts/postbuild.mjs",
     "preview": "vite preview",
     "build:demo": "vite build --config vite.demo.config.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
     "typecheck": "vue-tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -83,7 +85,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@axe-core/playwright": "^4.12.1",
     "@microsoft/api-extractor": "^7.58.7",
+    "@playwright/test": "^1.61.1",
     "@types/node": "^25.9.1",
     "@vitejs/plugin-vue": "^5.0.0",
     "@vue/shared": "^3.5.35",
