@@ -121,7 +121,7 @@ function onSelect(item: CommandItemData) {
 | `update:value`       | `string`          | Emitted when an item is selected  |
 | `select`             | `CommandItemData` | Emitted when an item is selected  |
 
-## 🧪 E2E tests
+## E2E tests
 
 The demo app is covered with Playwright end-to-end tests for the main command palette flows:
 
