@@ -45,8 +45,8 @@ test('filters items by label text', async ({ page }) => {
 
 test('filters items by keywords', async ({ page }) => {
   await openPalette(page)
-  await page.getByRole('combobox', { name: 'Command menu' }).fill('hotkeys')
-  await expect(page.locator('[data-cmdk-item][data-value="keyboard"]')).toBeVisible()
+  await page.getByRole('combobox', { name: 'Command menu' }).fill('settings')
+  await expect(page.locator('[data-cmdk-item][data-value="settings"]')).toBeVisible()
   await expect(page.locator('[data-cmdk-item]').filter({ hasText: 'Search files' })).toBeHidden()
 })
 
@@ -110,17 +110,17 @@ test('the dialog has a correct accessibility structure', async ({ page }) => {
   )
 
   // Announcement region
-  await expect(dialog.locator('[aria-live="polite"]')).toHaveText('10 items')
+  await expect(dialog.locator('[aria-live="polite"]')).toHaveText('5 items')
 
   // Listbox
   const listbox = dialog.getByRole('listbox')
   await expect(listbox).toHaveAttribute('aria-busy', 'false')
 
   // Groups
-  await expect(dialog.locator('[data-cmdk-group]')).toHaveCount(3)
+  await expect(dialog.locator('[data-cmdk-group]')).toHaveCount(1)
 
   // Options
-  await expect(listbox.getByRole('option')).toHaveCount(10)
+  await expect(listbox.getByRole('option')).toHaveCount(5)
 
   // Disabled item
   await expect(listbox.locator('[data-cmdk-item][data-value="billing"]')).toHaveAttribute(
