@@ -111,37 +111,7 @@ function scrollTo(id: string) {
 }
 
 /* ── Feature flags for vs-cmdk table ── */
-const cmdkFeatures = [
-  { feat: 'Command root value / onValueChange', react: true, vue: true, status: 'done' },
-  { feat: 'Command root shouldFilter', react: true, vue: true, status: 'done' },
-  { feat: 'Command root loop', react: true, vue: true, status: 'done' },
-  { feat: 'Command root label (aria-label)', react: true, vue: true, status: 'done' },
-  { feat: 'Command.Dialog open / onOpenChange', react: true, vue: true, status: 'done' },
-  { feat: 'Command.Dialog container (portal)', react: true, vue: false, status: 'future' },
-  { feat: 'Command.Input value / onValueChange', react: true, vue: true, status: 'done' },
-  { feat: 'Command.Item forceMount', react: true, vue: false, status: 'planned' },
-  { feat: 'Command.Item keywords', react: true, vue: true, status: 'done' },
-  { feat: 'Command.Item onSelect', react: true, vue: true, status: 'done' },
-  { feat: 'Command.Item auto value from textContent', react: true, vue: false, status: 'planned' },
-  { feat: 'Command.Group forceMount', react: true, vue: false, status: 'planned' },
-  { feat: 'Command.Separator alwaysRender', react: true, vue: false, status: 'future' },
-  { feat: 'useCommandState() selector', react: true, vue: false, status: 'planned' },
-  { feat: 'Nested items / Pages', react: true, vue: true, status: 'done' },
-  { feat: 'Built-in search / filtering', react: true, vue: true, status: 'done' },
-  { feat: 'Custom filter function', react: true, vue: true, status: 'done' },
-  { feat: 'Global shortcut listener', react: false, vue: true, status: 'bonus' },
-  { feat: 'Keyboard navigation', react: true, vue: true, status: 'done' },
-  { feat: 'Focus trap', react: true, vue: true, status: 'done' },
-  { feat: 'Zero dependencies', react: false, vue: true, status: 'bonus' },
-  { feat: 'TypeScript', react: true, vue: true, status: 'done' },
-]
 
-const statusLabels: Record<string, string> = {
-  done: '✅',
-  planned: '📋',
-  future: '💡',
-  bonus: '⭐',
-}
 </script>
 
 <template>
@@ -156,7 +126,6 @@ const statusLabels: Record<string, string> = {
         <a href="#features" @click.prevent="scrollTo('features')"> Features </a>
         <a href="#demo" @click.prevent="scrollTo('demo')"> Demo </a>
         <a href="#quickstart" @click.prevent="scrollTo('quickstart')"> Quick Start </a>
-        <a href="#comparison" @click.prevent="scrollTo('comparison')"> vs cmdk </a>
         <a href="#api" @click.prevent="scrollTo('api')"> API </a>
         <a
           href="https://github.com/yvng-jie/vue-cmdk"
@@ -451,43 +420,6 @@ function onSelect(item: CommandItemData) {
     &lt;/Command.List&gt;
   &lt;/template&gt;
 &lt;/Command.Dialog&gt;</code></pre>
-      </div>
-    </section>
-
-    <!-- ═══════════════ vs cmdk ═══════════════ -->
-    <section id="comparison" class="section">
-      <div class="section-header">
-        <h2 class="section-title">vs React cmdk</h2>
-        <p class="section-desc">
-          Feature parity with the original
-          <a href="https://github.com/pacocoursey/cmdk" target="_blank"> cmdk </a>
-          (React). Check the roadmap below.
-        </p>
-      </div>
-
-      <div class="comparison-table-wrap">
-        <table class="comparison-table">
-          <thead>
-            <tr>
-              <th>Feature</th>
-              <th class="col-react">React cmdk</th>
-              <th class="col-vue">vue-cmdk</th>
-              <th class="col-status">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="f in cmdkFeatures" :key="f.feat">
-              <td class="td-feat">{{ f.feat }}</td>
-              <td class="td-react">{{ f.react ? '✅' : '❌' }}</td>
-              <td class="td-vue">{{ f.vue ? '✅' : '❌' }}</td>
-              <td class="td-status">
-                <span :class="['status-badge', f.status]"
-                  >{{ statusLabels[f.status] }} {{ f.status }}</span
-                >
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </section>
 
