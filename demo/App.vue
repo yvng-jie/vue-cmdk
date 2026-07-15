@@ -152,7 +152,7 @@ function scrollTo(id: string) {
       </div>
       <div class="hero-content">
         <div class="hero-badge">
-          <span class="hero-badge-version">v0.3.0</span>
+          <span class="hero-badge-version">v0.3.1</span>
           <span class="hero-badge-dot">·</span>
           <span class="hero-badge-deps">Zero dependencies</span>
           <span class="hero-badge-dot">·</span>
