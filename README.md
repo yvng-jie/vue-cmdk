@@ -2,7 +2,7 @@
   <img src="https://img.shields.io/npm/v/vue-command-kit?color=blue&label=version" alt="npm">
   <img src="https://img.shields.io/badge/vue-3.4%2B-brightgreen" alt="vue">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="license">
-  <img src="https://img.shields.io/badge/bundle-5.0kB_gzip-green" alt="size">
+  <img src="https://img.shields.io/badge/bundle-6kB_gzip-green" alt="size">
   <img src="https://img.shields.io/badge/tests-117_passed-brightgreen" alt="tests">
 </p>
 
@@ -90,7 +90,7 @@ function onSelect(item: CommandItemData) {
 | `<Command.List>`      | Scrollable list rendering grouped items        |
 | `<Command.Group>`     | Group of items with heading                    |
 | `<Command.Item>`      | Single selectable command item                 |
-| `<Command.Separator>` | Visual separator with optional `alwaysRender`  |
+| `<Command.Separator>` | Visual separator between groups  |
 | `<Command.Empty>`     | Shown when no results match                    |
 | `<Command.Loading>`   | Loading indicator                              |
 
@@ -150,6 +150,8 @@ interface CommandItemData {
   forceMount?: boolean
   icon?: Component | VNode | (() => VNode)
   onSelect?: (item: CommandItemData) => void
+  /** Sub-page items. Selecting this item opens a sub-menu instead of closing */
+  children?: CommandItemData[]
 }
 ```
 
@@ -186,9 +188,9 @@ menu.toggle()
 
 | Format  | Size    |
 | ------- | ------- |
-| ESM     | 17.0 kB |
-| UMD     | 13.5 kB |
-| Gzipped | 5.0 kB  |
+| ESM     | 20.8 kB |
+| UMD     | 16.7 kB |
+| Gzipped | 6.0 kB  |
 
 ## License
 
