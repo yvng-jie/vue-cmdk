@@ -21,6 +21,12 @@
 - **TypeScript** — Full type inference, exported types, and declaration files
 - **Zero runtime dependencies** — Peer dependency only on `vue ^3.4.0`
 
+## Demo
+
+![vue-cmdk demo](assets/demo.gif)
+
+*Midnight theme · Nested pages · Search filtering · Disabled items*
+
 ## Installation
 
 ```bash

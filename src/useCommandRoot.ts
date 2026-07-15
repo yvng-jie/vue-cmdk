@@ -77,6 +77,11 @@ export function useCommandRoot(
   provide(CMDK_LOADING, getLoading)
   provide(CMDK_CLOSE_ON_SELECT, () => closeOnSelect)
   provide(CMDK_SELECT_HANDLER, (item: CommandItemData) => {
+    // If the item has children, navigate to sub-page instead of emitting select
+    if (item.children && item.children.length > 0) {
+      state.pushPage(item.children, item.label || item.value)
+      return
+    }
     emit('select', item)
     emit('update:value', item.value)
     onItemSelect?.(item)

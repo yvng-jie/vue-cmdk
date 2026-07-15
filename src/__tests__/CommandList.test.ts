@@ -4,7 +4,7 @@ import { ref, computed } from 'vue'
 import CommandList from '../CommandList.vue'
 import { CMDK_STATE, CMDK_LOADING, CMDK_A11Y_IDS } from '../injectionKeys'
 import type { UseCommandMenuReturn } from '../useCommandMenu'
-import type { CommandItemData } from '../types'
+import type { CommandItemData, CommandPage } from '../types'
 
 function createMockState(overrides: Partial<UseCommandMenuReturn> = {}): UseCommandMenuReturn {
   const items = ref<CommandItemData[]>([
@@ -45,6 +45,8 @@ function createMockState(overrides: Partial<UseCommandMenuReturn> = {}): UseComm
     return groups
   })
 
+  const pageStack = ref<CommandPage[]>([])
+
   return {
     visible,
     searchQuery,
@@ -61,6 +63,11 @@ function createMockState(overrides: Partial<UseCommandMenuReturn> = {}): UseComm
     selectNext: () => {},
     selectPrev: () => {},
     selectCurrent: () => {},
+    pageStack,
+    canGoBack: computed(() => pageStack.value.length > 0),
+    pageTitle: computed(() => ''),
+    pushPage: () => {},
+    goBack: () => {},
     ...overrides,
   }
 }

@@ -9,7 +9,7 @@ import {
 } from '../injectionKeys'
 import { ref, computed } from 'vue'
 import type { UseCommandMenuReturn } from '../useCommandMenu'
-import type { CommandItemData } from '../types'
+import type { CommandItemData, CommandPage } from '../types'
 
 function createMockState(): UseCommandMenuReturn {
   const items = ref<CommandItemData[]>([
@@ -24,6 +24,8 @@ function createMockState(): UseCommandMenuReturn {
   const searchQuery = ref('')
 
   const selectedValue = ref<string | undefined>()
+
+  const pageStack = ref<CommandPage[]>([])
 
   return {
     visible,
@@ -47,6 +49,11 @@ function createMockState(): UseCommandMenuReturn {
       activeIndex.value = Math.max(activeIndex.value - 1, 0)
     },
     selectCurrent: () => {},
+    pageStack,
+    canGoBack: computed(() => pageStack.value.length > 0),
+    pageTitle: computed(() => ''),
+    pushPage: () => {},
+    goBack: () => {},
   }
 }
 

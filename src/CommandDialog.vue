@@ -74,7 +74,11 @@ function closeOnMask(e: MouseEvent) {
 function onKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape') {
     e.preventDefault()
-    state.close()
+    if (state.canGoBack.value) {
+      state.goBack()
+    } else {
+      state.close()
+    }
   }
   if (e.key === 'Tab') {
     const wrapper = e.currentTarget as EventTarget & HTMLElement
@@ -111,6 +115,10 @@ function onKeydown(e: KeyboardEvent) {
         <div data-cmdk-dialog-mask="" aria-hidden="true" @click="closeOnMask" />
         <div data-cmdk-dialog-wrapper="">
           <div data-cmdk-dialog-header="">
+            <div v-if="state.canGoBack.value" data-cmdk-back="" @click="state.goBack">
+              <span data-cmdk-back-arrow>←</span>
+              <span data-cmdk-back-label>{{ state.pageTitle.value }}</span>
+            </div>
             <slot name="header">
               <CommandInput
                 ref="commandInputRef"

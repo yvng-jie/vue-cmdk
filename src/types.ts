@@ -20,6 +20,8 @@ export interface CommandItemData {
   forceMount?: boolean
   /** Callback when item is selected */
   onSelect?: (item: CommandItemData) => void
+  /** Sub-page items. When set, selecting this item opens a sub-menu instead of closing */
+  children?: CommandItemData[]
 }
 
 /** Props shared across command components */
@@ -68,4 +70,12 @@ export interface CommandDialogProps extends CommandRootProps {
 export interface CommandGroupData {
   heading: string
   items: CommandItemData[]
+}
+
+/** A snapshot of a page in the navigation stack */
+export interface CommandPage {
+  items: CommandItemData[]
+  searchQuery: string
+  activeIndex: number
+  title: string
 }

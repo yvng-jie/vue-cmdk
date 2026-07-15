@@ -1,5 +1,5 @@
 import { ref, computed, watch, onUnmounted, type Ref, type ComputedRef } from 'vue'
-import type { CommandItemData, CommandGroupData } from './types'
+import type { CommandItemData, CommandGroupData, CommandPage } from './types'
 import { parseShortcut, eventMatchesShortcut } from './utils/shortcut'
 
 export type FilterFn = (items: CommandItemData[], query: string) => CommandItemData[] | null
@@ -29,6 +29,16 @@ export interface UseCommandMenuReturn {
   selectNext: () => void
   selectPrev: () => void
   selectCurrent: () => void
+  /** Page navigation stack for sub-menus */
+  pageStack: Ref<CommandPage[]>
+  /** Whether there is a parent page to go back to */
+  canGoBack: ComputedRef<boolean>
+  /** Title of the current page (from the item that opened it) */
+  pageTitle: ComputedRef<string>
+  /** Push a sub-page onto the stack */
+  pushPage: (subItems: CommandItemData[], title: string) => void
+  /** Pop back to the parent page */
+  goBack: () => void
 }
 
 const UNGROUPED_KEY = '__ungrouped__'
@@ -49,16 +59,46 @@ export function useCommandMenu(
   const selectedValue = ref<string | undefined>()
   const items = ref<CommandItemData[]>([])
 
+  /* ── Page stack for nested sub-menus ── */
+  const pageStack = ref<CommandPage[]>([])
+  const canGoBack = computed(() => pageStack.value.length > 0)
+  const pageTitle = computed(() => {
+    if (pageStack.value.length === 0) return ''
+    return pageStack.value[pageStack.value.length - 1].title
+  })
+
+  function pushPage(subItems: CommandItemData[], title: string) {
+    pageStack.value.push({
+      items: items.value,
+      searchQuery: searchQuery.value,
+      activeIndex: activeIndex.value,
+      title,
+    })
+    items.value = subItems
+    searchQuery.value = ''
+    activeIndex.value = 0
+  }
+
+  function goBack() {
+    if (pageStack.value.length === 0) return
+    const prev = pageStack.value.pop()!
+    items.value = prev.items
+    searchQuery.value = prev.searchQuery
+    activeIndex.value = prev.activeIndex
+  }
+
   const toggle = () => {
     visible.value = !visible.value
   }
   const open = () => {
     visible.value = true
     activeIndex.value = 0
+    pageStack.value = []
   }
   const close = () => {
     visible.value = false
     searchQuery.value = ''
+    pageStack.value = []
   }
 
   /** Default filter: simple case-insensitive match against value, label, and keywords */
@@ -130,6 +170,11 @@ export function useCommandMenu(
   function selectCurrent() {
     const item = filteredItems.value[activeIndex.value]
     if (item && !item.disabled) {
+      // If the item has children, navigate to sub-page instead of selecting
+      if (item.children && item.children.length > 0) {
+        pushPage(item.children, item.label || item.value)
+        return
+      }
       selectedValue.value = item.value
       item.onSelect?.(item)
       onItemSelect?.(item)
@@ -194,5 +239,10 @@ export function useCommandMenu(
     selectNext,
     selectPrev,
     selectCurrent,
+    pageStack,
+    canGoBack,
+    pageTitle,
+    pushPage,
+    goBack,
   }
 }

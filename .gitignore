@@ -26,3 +26,4 @@ npm-debug.log*
 coverage/
 playwright-report/
 test-results/
+demo-capture/

@@ -20,6 +20,7 @@ const props = withDefaults(
     forceMount?: boolean
     icon?: Component | VNode | (() => VNode)
     onSelect?: (item: CommandItemData) => void
+    subItems?: CommandItemData[]
   }>(),
   {
     disabled: false,
@@ -29,6 +30,7 @@ const props = withDefaults(
     shortcut: undefined,
     icon: undefined,
     onSelect: undefined,
+    subItems: undefined,
   },
 )
 
@@ -45,6 +47,7 @@ const itemData = computed<CommandItemData>(() => ({
   forceMount: props.forceMount,
   icon: props.icon,
   onSelect: props.onSelect,
+  children: props.subItems,
 }))
 
 const iconComponent = computed(() => {
@@ -61,6 +64,8 @@ const isActive = computed(() => {
 })
 
 const onItemSelect = inject(CMDK_SELECT_HANDLER, () => {})
+
+const hasChildren = computed(() => props.subItems && props.subItems.length > 0)
 
 const displayLabel = computed(() => props.label || props.value)
 const highlightedLabel = computed(() => {
@@ -106,9 +111,10 @@ function handleClick() {
         </template>
         <template v-else>{{ displayLabel }}</template>
       </span>
-      <span v-if="shortcut" data-cmdk-item-shortcut>
+      <span v-if="shortcut && !hasChildren" data-cmdk-item-shortcut>
         {{ shortcut }}
       </span>
+      <span v-if="hasChildren" data-cmdk-item-arrow>›</span>
     </slot>
   </div>
 </template>

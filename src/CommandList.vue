@@ -49,6 +49,7 @@ const grouped = computed(() => state.groupedItems.value as CommandGroupData[])
             :disabled="item.disabled"
             :icon="item.icon"
             :on-select="item.onSelect"
+            :sub-items="item.children"
           />
         </CommandGroup>
         <CommandSeparator v-if="alwaysRenderSeparator || idx !== grouped.length - 1" />
