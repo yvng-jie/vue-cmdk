@@ -1,6 +1,6 @@
 {
   "name": "vue-command-kit",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "\u2318K \u2014 Fast, composable, unstyled command menu for Vue 3",
   "type": "module",
   "packageManager": "pnpm@11.1.2",
@@ -24,7 +24,9 @@
   "files": [
     "dist/vue-cmdk.js",
     "dist/vue-cmdk.umd.cjs",
-    "dist/**/*.d.ts"
+    "dist/**/*.d.ts",
+    "README.md",
+    "LICENSE"
   ],
   "sideEffects": false,
   "scripts": {
