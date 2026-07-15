@@ -43,42 +43,42 @@ const demoItems: CommandItemData[] = [
     value: 'search',
     label: 'Search files',
     shortcut: '⌘S',
-    group: 'Navigation',
-    keywords: ['find', 'lookup'],
   },
   {
-    value: 'home',
-    label: 'Go to home',
-    shortcut: '⌘H',
-    group: 'Navigation',
-    keywords: ['dashboard'],
+    value: 'settings',
+    label: 'Settings',
+    shortcut: '⌘,',
+    children: [
+      {
+        value: 'general',
+        label: 'General',
+      },
+      {
+        value: 'appearance',
+        label: 'Appearance',
+        children: [
+          { value: 'theme-dark', label: 'Dark mode' },
+          { value: 'theme-light', label: 'Light mode' },
+        ],
+      },
+      {
+        value: 'notifications',
+        label: 'Notifications',
+        children: [
+          { value: 'notif-email', label: 'Email' },
+          { value: 'notif-push', label: 'Push', disabled: true },
+          { value: 'notif-sound', label: 'Sound' },
+        ],
+      },
+      {
+        value: 'privacy',
+        label: 'Privacy',
+      },
+    ],
   },
-  {
-    value: 'bookmarks',
-    label: 'Bookmarks',
-    shortcut: '⌘B',
-    group: 'Navigation',
-    keywords: ['favorites'],
-  },
-  { value: 'settings', label: 'Open settings', shortcut: '⌘,', group: 'Actions' },
-  {
-    value: 'theme',
-    label: 'Toggle theme',
-    shortcut: '⌘D',
-    group: 'Actions',
-    keywords: ['dark', 'light'],
-  },
-  {
-    value: 'billing',
-    label: 'Billing (coming soon)',
-    group: 'Actions',
-    disabled: true,
-    keywords: ['payment'],
-  },
-  { value: 'notifications', label: 'Notifications', group: 'System' },
-  { value: 'language', label: 'Change language', group: 'System' },
-  { value: 'keyboard', label: 'Keyboard shortcuts', group: 'System', keywords: ['hotkeys'] },
-  { value: 'logout', label: 'Sign out', group: 'Actions' },
+  { value: 'theme', label: 'Toggle theme', shortcut: '⌘D' },
+  { value: 'billing', label: 'Billing (coming soon)', disabled: true },
+  { value: 'logout', label: 'Sign out' },
 ]
 
 const isLoading = ref(false)
@@ -126,7 +126,7 @@ const cmdkFeatures = [
   { feat: 'Command.Group forceMount', react: true, vue: false, status: 'planned' },
   { feat: 'Command.Separator alwaysRender', react: true, vue: false, status: 'future' },
   { feat: 'useCommandState() selector', react: true, vue: false, status: 'planned' },
-  { feat: 'Nested items / Pages', react: true, vue: false, status: 'planned' },
+  { feat: 'Nested items / Pages', react: true, vue: true, status: 'done' },
   { feat: 'Built-in search / filtering', react: true, vue: true, status: 'done' },
   { feat: 'Custom filter function', react: true, vue: true, status: 'done' },
   { feat: 'Global shortcut listener', react: false, vue: true, status: 'bonus' },
@@ -183,11 +183,11 @@ const statusLabels: Record<string, string> = {
       </div>
       <div class="hero-content">
         <div class="hero-badge">
-          <span class="hero-badge-version">v0.1.0</span>
+          <span class="hero-badge-version">v0.3.0</span>
           <span class="hero-badge-dot">·</span>
           <span class="hero-badge-deps">Zero dependencies</span>
           <span class="hero-badge-dot">·</span>
-          <span class="hero-badge-size">3.4 kB gzip</span>
+          <span class="hero-badge-size">6 kB gzip</span>
         </div>
         <h1 class="hero-title">
           <span class="hero-cmd">⌘K</span>
@@ -351,7 +351,7 @@ const statusLabels: Record<string, string> = {
         <div class="feature-card">
           <div class="feature-icon">📦</div>
           <h3>Tiny Bundle</h3>
-          <p>3.4 kB gzipped. Zero runtime dependencies. Peer dependency only on Vue 3.4+.</p>
+          <p>6 kB gzipped. Zero runtime dependencies. Peer dependency only on Vue 3.4+.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🎯</div>
